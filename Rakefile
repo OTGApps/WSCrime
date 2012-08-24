@@ -15,6 +15,7 @@ Motion::Project::App.setup do |app|
 
   app.pods do
     pod 'CKCalendar'
+    pod 'NSDate-Extensions'
     #pod 'FlurrySDK'
   end
 

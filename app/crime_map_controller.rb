@@ -1,20 +1,18 @@
 class CrimeMapController < UIViewController
 
-  def loadView
-  	self.view = MKMapView.alloc.init
-    view.delegate = self
-  end
-
   def viewDidLoad
     super
+
+    @mapView = MKMapView.alloc.initWithFrame(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height))
+    @mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight
+    self.view.addSubview(@mapView)
+    @mapView.delegate = self
 
     #Init instance values
     @didInitialZoom = false
     @didInitialPinZoom = false
     @theDate = NSDate.date
     @thePoints = NSMutableArray.alloc.init
-
-    #view.frame = self.view.frame
 
   	#Set the application title
   	self.title = "Winston-Salem Crime Map"
@@ -69,7 +67,7 @@ class CrimeMapController < UIViewController
       metersPerMile = 1609.344
       initialLocation = CLLocationCoordinate2D.new(36.10, -80.26)
       region = MKCoordinateRegionMakeWithDistance(initialLocation, 4 * metersPerMile, 4 * metersPerMile)
-      self.view.setRegion(region, animated:true)
+      @mapView.setRegion(region, animated:true)
 
       @didInitialZoom = true
     else
@@ -80,6 +78,9 @@ class CrimeMapController < UIViewController
 
   def loadData
 
+    @dateButton.title = "Loading data from server..."
+    @activityView.startAnimating
+
     #Find the date to use
     dateFormat = NSDateFormatter.alloc.init
     dateFormat.setDateFormat("yyyy-MM-dd")
@@ -87,7 +88,7 @@ class CrimeMapController < UIViewController
 
     BubbleWrap::HTTP.get("http://crimestats.mohawkapps.com/nc/winston-salem/?date=" + dateString) do |response|
         if response.ok?
-          p response.body.to_str
+          #p response.body.to_str
 
           json = BubbleWrap::JSON.parse(response.body.to_str)
 
@@ -123,8 +124,8 @@ class CrimeMapController < UIViewController
 
     @dateButton.title = @theDate.to_s
 
-    self.view.annotations.each do |thisAnnotation|
-      self.view.removeAnnotation(thisAnnotation)
+    @mapView.annotations.each do |thisAnnotation|
+      @mapView.removeAnnotation(thisAnnotation)
     end
 
     #Get the first crime
@@ -144,10 +145,9 @@ class CrimeMapController < UIViewController
 
     p @thePoints.count
     @thePoints.each do |crime|
-      self.view.addAnnotation(crime)
+      @mapView.addAnnotation(crime)
     end
 
-  
     if @didInitialPinZoom == false
       rezoom(nil)
       @didInitialPinZoom = true
@@ -171,7 +171,7 @@ class CrimeMapController < UIViewController
   def rezoom(sender)
 
     #Don't attempt the rezoom of there are no pins
-    if self.view.annotations.count == 0
+    if @mapView.annotations.count == 0
       false
     end
 
@@ -180,7 +180,7 @@ class CrimeMapController < UIViewController
     bottomRightCoord = CLLocationCoordinate2DMake(90, -180)
 
     #Find the bounds of the pins
-    self.view.annotations.each do |crime|
+    @mapView.annotations.each do |crime|
       topLeftCoord.longitude = [topLeftCoord.longitude, crime.coordinate.longitude].min
       topLeftCoord.latitude = [topLeftCoord.latitude, crime.coordinate.latitude].max
       bottomRightCoord.longitude = [bottomRightCoord.longitude, crime.coordinate.longitude].max
@@ -194,8 +194,8 @@ class CrimeMapController < UIViewController
       ((topLeftCoord.latitude - bottomRightCoord.latitude) * 1.075).abs, 
       ((bottomRightCoord.longitude - topLeftCoord.longitude) * 1.075).abs)
     region = MKCoordinateRegionMake(coord, span)
-    fits = self.view.regionThatFits(region);
-    self.view.setRegion(fits, animated:true)
+    fits = @mapView.regionThatFits(region);
+    @mapView.setRegion(fits, animated:true)
   end
 
   def loadAboutWindow(sender)
@@ -205,6 +205,98 @@ class CrimeMapController < UIViewController
 
   def changeDate(sender)
     puts "Change the date"
+
+    @animationTime = 0.25
+
+    #Show the calendar.
+    p @calendarHolder
+    if @calendarHolder != nil
+      destroyCalendar
+      return
+    end
+
+    @calendarHolder = UIView.alloc.initWithFrame(@mapView.frame)
+    @calendarView = CKCalendarView.alloc.initWithStartDay(1)
+    @calendarView.delegate = self
+    @calendarView.selectedDate = @theDate
+
+    #Position the calendar view
+    screenBounds = @mapView.bounds
+    calendarWidth = 300
+    calendarHeight = 300
+
+    calendarBounds = CGRectMake(
+      (screenBounds.size.width  - calendarWidth) / 2,
+      (screenBounds.size.height  - calendarHeight) / 2,
+      calendarWidth,
+      calendarHeight)
+      
+    @calendarView.autoresizingMask = (
+      UIViewAutoresizingFlexibleTopMargin |
+      UIViewAutoresizingFlexibleBottomMargin |
+      UIViewAutoresizingFlexibleLeftMargin |
+      UIViewAutoresizingFlexibleRightMargin)
+    
+    @calendarView.frame = calendarBounds;
+    @calendarView.setCenter(@mapView.center)
+
+    @calendarHolder.addSubview(@calendarView)
+
+    #@calendarHolder.whenTapped do
+    #  destroyCalendar
+    #end
+
+    @calendarHolder.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight
+    @calendarHolder.alpha = 0
+    @calendarView.alpha = 0
+    @calendarHolder.backgroundColor = UIColor.colorWithWhite(0, alpha:0.5)
+
+    self.view.addSubview(@calendarHolder)
+
+    UIView.animateWithDuration(@animationTime,
+        delay:0,
+        options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationCurveEaseOut | UIViewAnimationOptionBeginFromCurrentState,
+        animations: -> do
+          @calendarHolder.alpha = 1;
+          @calendarView.alpha = 1;
+        end,
+        completion: ->(finished) do
+        end)
+  end
+
+  def calendar(calendar, didSelectDate:date)
+    p "selecting date" + date.to_s
+
+    if @theDate.isEqualToDate(date) == false
+
+      if date.isLaterThanDate(NSDate.date)
+        App.alert("The US. Department of Precognitive Crime has not been established yet.\n\nUntil then, please select a date in the past.")
+        return;
+      end
+          
+      @theDate = date
+      loadData
+    end
+
+    destroyCalendar
+  end
+
+
+
+  def destroyCalendar
+    UIView.animateWithDuration(@animationTime,
+      delay:0,
+      options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationCurveEaseOut | UIViewAnimationOptionBeginFromCurrentState,
+      animations: -> do  
+          @calendarHolder.alpha = 0
+          @calendarView.alpha = 0
+      end,
+      completion: ->(finished) do
+          @calendarHolder.removeFromSuperview
+          @calendarView.delegate = nil
+          @calendarView = nil
+          @calendarHolder = nil
+      end)
   end
 
   #only allow landscape if theyre on an iPad
