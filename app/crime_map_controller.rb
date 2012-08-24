@@ -30,11 +30,16 @@ class CrimeMapController < UIViewController
       action: "rezoom:")
   	self.navigationItem.rightBarButtonItem = reZoomButton
 
-  	buttonItem1 = UIBarButtonItem.alloc.initWithTitle(
-		  "About",
-  		style: UIBarButtonItemStyleBordered,
-  		target: self,
-  		action: "loadAboutWindow:")
+    buttonItem1 = UIBarButtonItem.alloc.initWithTitle(
+      "About",
+      style: UIBarButtonItemStyleBordered,
+      target: self,
+      action: "loadAboutWindow:")
+    #arButton = UIBarButtonItem.alloc.initWithTitle(
+    #  "AR",
+    #  style: UIBarButtonItemStyleBordered,
+    #  target: self,
+    #  action: "initAR")
   	flexibleSpace = UIBarButtonItem.alloc.initWithBarButtonSystemItem(
   		UIBarButtonSystemItemFlexibleSpace,
   		target:nil,
@@ -51,16 +56,25 @@ class CrimeMapController < UIViewController
        target: self,
        action: "changeDate:")
     
-    self.toolbarItems = [buttonItem1, flexibleSpace, @activityViewButton, @dateButton]
+    #if Device.camera.front?
+    #  self.toolbarItems = [buttonItem1, arBUtton, flexibleSpace, @activityViewButton, @dateButton]
+    #else
+      self.toolbarItems = [buttonItem1, flexibleSpace, @activityViewButton, @dateButton]
+    #end
+
 
     #Send a request off to the server to get the data.
     loadData
 
   end
 
+  #def initAR
+  #  p "init AR"
+  #end
+
   def viewWillAppear(animated)
     
-    #Check to see if we've loaded the view into WInston-Salem yet
+    #Check to see if we've loaded the view into Winston-Salem yet
     if @didInitialZoom == false
 
       #Center on Winston-Salem.
@@ -76,6 +90,7 @@ class CrimeMapController < UIViewController
 
   end    
 
+  #This method loads the data from my server and sets the data into the @thePoints var
   def loadData
 
     @dateButton.title = "Loading data from server..."
@@ -88,7 +103,6 @@ class CrimeMapController < UIViewController
 
     BubbleWrap::HTTP.get("http://crimestats.mohawkapps.com/nc/winston-salem/?date=" + dateString) do |response|
         if response.ok?
-          #p response.body.to_str
 
           json = BubbleWrap::JSON.parse(response.body.to_str)
 
@@ -99,13 +113,14 @@ class CrimeMapController < UIViewController
               @thePoints.push(CrimeAnnotation.new(crimeData, crimeData['type']))
             end
 
-            @activityView.stopAnimating
+            #Re-layout all the data on the mapView
             replot
 
           else
             App.alert("No Results Found for that day.")
             @activityView.stopAnimating
             @dateButton.title = "No Results"
+            removeAllAnnotations
           end
 
           #p @thePoints
@@ -119,18 +134,22 @@ class CrimeMapController < UIViewController
 
   end
 
+  def removeAllAnnotations
+    @mapView.annotations.each do |thisAnnotation|
+      @mapView.removeAnnotation(thisAnnotation)
+    end
+  end
+
   def replot
     p "Replotting"
 
     @dateButton.title = @theDate.to_s
+    @activityView.stopAnimating
 
-    @mapView.annotations.each do |thisAnnotation|
-      @mapView.removeAnnotation(thisAnnotation)
-    end
+    removeAllAnnotations
 
-    #Get the first crime
+    #Get the first crime so we can make sure @theDate is set correctly for our data
     firstAnnotation = @thePoints[0]
-    #p firstAnnotation
 
     dateFormat = NSDateFormatter.alloc.init
     dateFormat.setDateFormat("yyyy-MM-dd")
@@ -143,11 +162,13 @@ class CrimeMapController < UIViewController
 
     @dateButton.title = theNewDate
 
+    #Add the points to the map
     p @thePoints.count
     @thePoints.each do |crime|
       @mapView.addAnnotation(crime)
     end
 
+    #Only change the map zoom if this is the first data load.
     if @didInitialPinZoom == false
       rezoom(nil)
       @didInitialPinZoom = true
@@ -160,6 +181,7 @@ class CrimeMapController < UIViewController
     if view = mapView.dequeueReusableAnnotationViewWithIdentifier(ViewIdentifier)
       view.annotation = crime
     else
+      #Set the pin properties
       view = MKPinAnnotationView.alloc.initWithAnnotation(crime, reuseIdentifier:ViewIdentifier)
       view.canShowCallout = true
       view.animatesDrop = false
@@ -172,7 +194,7 @@ class CrimeMapController < UIViewController
 
     #Don't attempt the rezoom of there are no pins
     if @mapView.annotations.count == 0
-      false
+      return
     end
 
     #Set some boundaries
@@ -187,6 +209,7 @@ class CrimeMapController < UIViewController
       bottomRightCoord.latitude = [bottomRightCoord.latitude, crime.coordinate.latitude].min 
     end
 
+    #Find the bounds of all the pins and set the mapView 
     coord = CLLocationCoordinate2DMake(
       topLeftCoord.latitude - (topLeftCoord.latitude - bottomRightCoord.latitude) * 0.5, 
       topLeftCoord.longitude + (bottomRightCoord.longitude - topLeftCoord.longitude) * 0.5)
@@ -198,11 +221,12 @@ class CrimeMapController < UIViewController
     @mapView.setRegion(fits, animated:true)
   end
 
+  #Present the about window in a moval view.
   def loadAboutWindow(sender)
-    aboutNavController = UINavigationController.alloc.initWithRootViewController(AboutController.alloc.init)
-    self.navigationController.presentModalViewController(aboutNavController, animated:true)
+    self.navigationController.presentModalViewController(UINavigationController.alloc.initWithRootViewController(AboutController.alloc.init), animated:true)
   end
 
+  #Present the calendar view to change the date.
   def changeDate(sender)
     puts "Change the date"
 
@@ -264,8 +288,9 @@ class CrimeMapController < UIViewController
         end)
   end
 
+  #CKCalendarView delegate method for when a date is tapped
   def calendar(calendar, didSelectDate:date)
-    p "selecting date" + date.to_s
+    p "Selecting date: " + date.to_s
 
     if @theDate.isEqualToDate(date) == false
 
@@ -281,8 +306,7 @@ class CrimeMapController < UIViewController
     destroyCalendar
   end
 
-
-
+  #Goodbye, calendar!
   def destroyCalendar
     UIView.animateWithDuration(@animationTime,
       delay:0,

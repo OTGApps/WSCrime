@@ -1,4 +1,5 @@
 class AppDelegate
+
   def application(application, didFinishLaunchingWithOptions:launchOptions)
     @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
     @window.rootViewController = UINavigationController.alloc.initWithRootViewController(CrimeMapController.alloc.init)
@@ -11,9 +12,11 @@ class AppDelegate
     true
   end
 
-  def uncaughtExceptionHandler(exception)
+  #Flurry exception handler
+  #Commented out till I can 
+  #def uncaughtExceptionHandler(exception)
     #FlurryAnalytics.logError("Uncaught", message:"Crash!", exception:exception)
-  end
+  #end
 
 
 end
