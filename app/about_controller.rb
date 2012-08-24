@@ -17,10 +17,14 @@ class AboutController < UIViewController
     view.delegate = self
 
     aboutContent = File.read(App.resources_path + "/AboutView.html")
-    baseURL = NSURL.alloc.initWithString(App.resources_path)
+    baseURL = NSURL.fileURLWithPath(App.resources_path)
     self.view.loadHTMLString(aboutContent, baseURL:baseURL)
-    
+
   end
+
+  #def webViewDidFinishLoad(webView)
+  #  p self.view.stringByEvaluatingJavaScriptFromString("document.getElementsByTagName('html')[0].outerHTML")
+  #end
 
   def goBack
     self.navigationController.dismissModalViewControllerAnimated(true)
