@@ -51,7 +51,7 @@ class CrimeMapController < UIViewController
   	@activityViewButton = UIBarButtonItem.alloc.initWithCustomView(@activityView)
 
     @dateButton = UIBarButtonItem.alloc.initWithTitle(
-      "Loading data from server...",
+      "Loading data...",
        style: UIBarButtonItemStyleBordered,
        target: self,
        action: "changeDate:")
@@ -93,7 +93,7 @@ class CrimeMapController < UIViewController
   #This method loads the data from my server and sets the data into the @thePoints var
   def loadData
 
-    @dateButton.title = "Loading data from server..."
+    @dateButton.title = "Loading data..."
     @activityView.startAnimating
 
     #Find the date to use
