@@ -22,6 +22,7 @@ class AboutController < UIViewController
 
   end
 
+  #debugging function to output the html of the webview once loaded.
   #def webViewDidFinishLoad(webView)
   #  p self.view.stringByEvaluatingJavaScriptFromString("document.getElementsByTagName('html')[0].outerHTML")
   #end
