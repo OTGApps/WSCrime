@@ -21,17 +21,19 @@ Motion::Project::App.setup do |app|
     :products => ['libFlurryAnalytics.a'],
     :headers_dir => 'vendor/FlurryAnalytics')
 
-  app.codesign_certificate = "iPhone Developer: Mark Rickert (YA2VZGDX4S)"
-  app.provisioning_profile = "/Volumes/mrickert/Library/MobileDevice/Provisioning\ Profiles/EF63CB15-B5E7-4FB6-9A8C-07A8F09AA8AD.mobileprovision"  
-
   app.pods do
     pod 'CKCalendar'
     pod 'NSDate-Extensions'
   end
 
+  app.codesign_certificate = "iPhone Developer: Mark Rickert (YA2VZGDX4S)"
   app.development do
-    # This entitlement is required during development but must not be used for release.
     app.entitlements['get-task-allow'] = true
+    app.provisioning_profile = "/Volumes/mrickert/Library/MobileDevice/Provisioning\ Profiles/EF63CB15-B5E7-4FB6-9A8C-07A8F09AA8AD.mobileprovision"  
+  end
+
+  app.release do
+    app.provisioning_profile = "/Volumes/mrickert/Library/MobileDevice/Provisioning\ Profiles/398F0715-559F-4861-8FF4-D828F6263DC6.mobileprovision"  
   end
 
 end
