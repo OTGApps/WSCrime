@@ -5,12 +5,13 @@ class AboutController < UIViewController
 
     self.title = "About"
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack
+    #self.navigationController.modalPresentationStyle = UIModalPresentationFormSheet
 
     backButton = UIBarButtonItem.alloc.initWithTitle(
       "Done", 
       style:UIBarButtonItemStyleDone, 
       target:self, 
-      action:"goBack")
+      action:"closeModal")
     self.navigationItem.rightBarButtonItem = backButton;
 
     self.view = UIWebView.alloc.init
@@ -18,16 +19,31 @@ class AboutController < UIViewController
 
     aboutContent = File.read(App.resources_path + "/AboutView.html")
     baseURL = NSURL.fileURLWithPath(App.resources_path)
+    
+    #Convert images over to retina if the images exist.
+    if Device.retina?
+      aboutContent.gsub!(/src=['"](.*)\.(jpg|gif|png)['"]/) do |img|
+        if File.exists?(App.resources_path + "/#{$1}@2x.#{$2}")
+          uiImage = UIImage.imageNamed("/#{$1}@2x.#{$2}")
+          
+          newWidth = uiImage.size.width / 2
+          newHeight = uiImage.size.height / 2
+
+          img = "src=\"#{$1}@2x.#{$2}\" width=\"#{newWidth}\" height=\"#{newHeight}\""
+        end
+      end
+    end
+    
     self.view.loadHTMLString(aboutContent, baseURL:baseURL)
 
   end
 
   #debugging function to output the html of the webview once loaded.
   #def webViewDidFinishLoad(webView)
-  #  p self.view.stringByEvaluatingJavaScriptFromString("document.getElementsByTagName('html')[0].outerHTML")
+  #  puts self.view.stringByEvaluatingJavaScriptFromString("document.getElementsByTagName('html')[0].outerHTML")
   #end
 
-  def goBack
+  def closeModal
     self.navigationController.dismissModalViewControllerAnimated(true)
   end
 
