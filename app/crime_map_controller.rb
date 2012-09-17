@@ -207,12 +207,16 @@ class CrimeMapController < UIViewController
 
   #Present the about window in a moval view.
   def loadAboutWindow(sender)
-    self.navigationController.presentModalViewController(UINavigationController.alloc.initWithRootViewController(AboutController.alloc.init), animated:true)
+    aboutViewController = AboutController.alloc.init
+    aboutNavController = UINavigationController.alloc.initWithRootViewController(aboutViewController)
+    aboutNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
+
+    self.navigationController.presentModalViewController(aboutNavController, animated:true)
   end
 
   #Present the calendar view to change the date.
   def changeDate(sender)
-    puts "Change the date"
+    puts "Changing the date"
 
     @animationTime = 0.25
 
