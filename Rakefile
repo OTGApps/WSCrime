@@ -2,6 +2,7 @@
 $:.unshift("/Library/RubyMotion/lib")
 require 'motion/project'
 require 'bundler'
+Bundler.setup
 Bundler.require
 
 Motion::Project::App.setup do |app|
@@ -12,15 +13,16 @@ Motion::Project::App.setup do |app|
   app.version = '1.4'
   app.short_version = '7'
   app.interface_orientations = [:portrait, :landscape_left, :landscape_right, :portrait_upside_down]
-  app.deployment_target = "5.0"
+  #app.sdk_version = "6.0"
+  #app.deployment_target = "6.0"
 
   #Add Flurry Analytics as a static library.
   app.vendor_project('vendor/FlurryAnalytics', :static,
     :products => ['libFlurryAnalytics.a'],
     :headers_dir => 'vendor/FlurryAnalytics')
 
-  app.codesign_certificate = "iPhone Developer: Mark Rickert (YA2VZGDX4S)"
-  app.provisioning_profile = "/Volumes/mrickert/Library/MobileDevice/Provisioning\ Profiles/EF63CB15-B5E7-4FB6-9A8C-07A8F09AA8AD.mobileprovision"  
+  #app.codesign_certificate = "iPhone Developer: Mark Rickert (YA2VZGDX4S)"
+  #app.provisioning_profile = "/Volumes/mrickert/Library/MobileDevice/Provisioning\ Profiles/EF63CB15-B5E7-4FB6-9A8C-07A8F09AA8AD.mobileprovision"  
 
   app.pods do
     pod 'CKCalendar'

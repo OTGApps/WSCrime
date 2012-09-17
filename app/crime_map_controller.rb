@@ -1,12 +1,12 @@
 class CrimeMapController < UIViewController
 
   def viewDidLoad
-    super
 
     @mapView = MKMapView.alloc.initWithFrame(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height))
     @mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight
     self.view.addSubview(@mapView)
     @mapView.delegate = self
+
 
     #Init instance values
     @didInitialZoom = false
@@ -35,11 +35,7 @@ class CrimeMapController < UIViewController
       style: UIBarButtonItemStyleBordered,
       target: self,
       action: "loadAboutWindow:")
-    #arButton = UIBarButtonItem.alloc.initWithTitle(
-    #  "AR",
-    #  style: UIBarButtonItemStyleBordered,
-    #  target: self,
-    #  action: "initAR")
+
   	flexibleSpace = UIBarButtonItem.alloc.initWithBarButtonSystemItem(
   		UIBarButtonSystemItemFlexibleSpace,
   		target:nil,
@@ -56,21 +52,12 @@ class CrimeMapController < UIViewController
        target: self,
        action: "changeDate:")
     
-    #if Device.camera.front?
-    #  self.toolbarItems = [buttonItem1, arBUtton, flexibleSpace, @activityViewButton, @dateButton]
-    #else
-      self.toolbarItems = [buttonItem1, flexibleSpace, @activityViewButton, @dateButton]
-    #end
-
+    self.toolbarItems = [buttonItem1, flexibleSpace, @activityViewButton, @dateButton]
 
     #Send a request off to the server to get the data.
     loadData
 
   end
-
-  #def initAR
-  #  p "init AR"
-  #end
 
   def viewWillAppear(animated)
     
@@ -87,12 +74,10 @@ class CrimeMapController < UIViewController
     else
       puts "Initial zoom already done."
     end
-
   end    
 
   #This method loads the data from my server and sets the data into the @thePoints var
   def loadData
-
     @dateButton.title = "Loading data..."
     @activityView.startAnimating
 
@@ -173,7 +158,6 @@ class CrimeMapController < UIViewController
       rezoom(nil)
       @didInitialPinZoom = true
     end
-
   end
 
   ViewIdentifier = 'ViewIdentifier'
