@@ -27,17 +27,7 @@ class CrimeAnnotation
   end
 
   def sortableTime
-    t = time.split(" ").first
-    ap = time.split(" ").last
-
-    if ap == "pm"
-      parts = t.split(":")
-      hour = parts.first.to_i + 12
-      t = hour.to_s + parts.last
-    else
-      t = t.split(":").join("")
-    end
-    t.to_i
+    @crime['timestamp']
   end
   
   def coordinate
