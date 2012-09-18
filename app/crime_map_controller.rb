@@ -57,7 +57,14 @@ class CrimeMapController < UIViewController
 
     #Send a request off to the server to get the data.
     loadData
+  end
 
+  def viewDidAppear(animated)
+    # Show the about window if this is their first time loading the app.
+    seenAbout = App::Persistence['seenAbout']
+    unless seenAbout == "yes"
+      loadAboutWindow(nil)
+    end
   end
 
   def viewWillAppear(animated)
@@ -208,6 +215,9 @@ class CrimeMapController < UIViewController
 
   #Present the about window in a moval view.
   def loadAboutWindow(sender)
+
+    App::Persistence['seenAbout'] = "yes"
+
     aboutViewController = AboutController.alloc.init
     aboutNavController = UINavigationController.alloc.initWithRootViewController(aboutViewController)
     aboutNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
@@ -312,13 +322,19 @@ class CrimeMapController < UIViewController
       end)
   end
 
-  #only allow landscape if theyre on an iPad
+  #only allow landscape if they're on an iPad
   def shouldAutorotateToInterfaceOrientation(interfaceOrientation)
-
     if Device.iphone?
-      interfaceOrientation == UIInterfaceOrientationPortrait || interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown;
+      interfaceOrientation == UIInterfaceOrientationPortrait || interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown
     else
       true
+    end
+  end
+  def supportedInterfaceOrientations
+    if Device.iphone?
+      UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown
+    else
+      UIInterfaceOrientationMaskAll
     end
   end
 
