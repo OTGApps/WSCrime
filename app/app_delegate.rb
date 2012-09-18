@@ -2,7 +2,7 @@ class AppDelegate
 
   def application(application, didFinishLaunchingWithOptions:launchOptions)
     @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    @window.rootViewController = MyNavigationController.alloc.initWithRootViewController(CrimeMapController.alloc.init)
+    @window.rootViewController = MyNavigationController.alloc.initWithRootViewController(MapController.alloc.init)
     @window.rootViewController.wantsFullScreenLayout = true
     @window.makeKeyAndVisible
 

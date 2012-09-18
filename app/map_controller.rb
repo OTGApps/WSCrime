@@ -1,4 +1,4 @@
-class CrimeMapController < UIViewController
+class MapController < UIViewController
 
   def viewDidLoad
 
@@ -344,4 +344,4 @@ class CrimeMapController < UIViewController
       end)
   end
 
-end #CrimeMapController
+end #MapController
