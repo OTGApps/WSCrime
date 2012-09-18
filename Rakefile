@@ -37,3 +37,9 @@ Motion::Project::App.setup do |app|
   end
 
 end
+
+desc "Open latest crash log"
+task :log do
+  app = Motion::Project::App.config
+  exec "less '#{Dir[File.join(ENV['HOME'], "/Library/Logs/DiagnosticReports/#{app.name}*")].last}'"
+end
