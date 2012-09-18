@@ -24,6 +24,7 @@ Motion::Project::App.setup do |app|
   app.pods do
     pod 'CKCalendar'
     pod 'NSDate-Extensions'
+    pod 'Appirater'
   end
 
   app.codesign_certificate = "iPhone Developer: Mark Rickert (YA2VZGDX4S)"
