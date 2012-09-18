@@ -15,7 +15,8 @@ class CrimeMapController < UIViewController
     @thePoints = NSMutableArray.alloc.init
 
   	#Set the application title
-  	self.title = "Winston-Salem Crime Map"
+  	#self.title = "Winston-Salem Crime Map"
+    self.setTitle("Crime Map", subtitle:"Winston-Salem, NC")
     
     #Setup the toolbar and navigationbar
     self.navigationController.setToolbarHidden(false)
