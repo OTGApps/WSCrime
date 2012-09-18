@@ -5,7 +5,6 @@ class AboutController < UIViewController
 
     self.title = "About"
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack
-    #self.navigationController.modalPresentationStyle = UIModalPresentationFormSheet
 
     backButton = UIBarButtonItem.alloc.initWithTitle(
       "Done", 
@@ -55,5 +54,5 @@ class AboutController < UIViewController
     end
     true #return true for local file loading.
   end
-  
+
 end
