@@ -55,5 +55,5 @@ class AboutController < UIViewController
     end
     true #return true for local file loading.
   end
-
+  
 end

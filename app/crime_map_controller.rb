@@ -219,7 +219,7 @@ class CrimeMapController < UIViewController
     App::Persistence['seenAbout'] = "yes"
 
     aboutViewController = AboutController.alloc.init
-    aboutNavController = UINavigationController.alloc.initWithRootViewController(aboutViewController)
+    aboutNavController = MyNavigationController.alloc.initWithRootViewController(aboutViewController)
     aboutNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
 
     self.navigationController.presentModalViewController(aboutNavController, animated:true)
@@ -320,22 +320,6 @@ class CrimeMapController < UIViewController
           @calendarView = nil
           @calendarHolder = nil
       end)
-  end
-
-  #only allow landscape if they're on an iPad
-  def shouldAutorotateToInterfaceOrientation(interfaceOrientation)
-    if Device.iphone?
-      interfaceOrientation == UIInterfaceOrientationPortrait || interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown
-    else
-      true
-    end
-  end
-  def supportedInterfaceOrientations
-    if Device.iphone?
-      UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown
-    else
-      UIInterfaceOrientationMaskAll
-    end
   end
 
 end #CrimeMapController

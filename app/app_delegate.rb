@@ -6,8 +6,7 @@ class AppDelegate
     @window.rootViewController.wantsFullScreenLayout = true
     @window.makeKeyAndVisible
 
-    #NSSetUncaughtExceptionHandler(NSUncaughtExceptionHandler* )
-    #NSSetUncaughtExceptionHandler(uncaughtExceptionHandler)
+    NSSetUncaughtExceptionHandler("uncaughtExceptionHandler")
     FlurryAnalytics.startSession("VNHHFKB2GK8BT22TPQRK")
     FlurryAnalytics.setUserID('markrickert')
 
@@ -16,8 +15,8 @@ class AppDelegate
 
   #Flurry exception handler
   #Commented out till I can figure out how to implement Flurry
-  #def uncaughtExceptionHandler(exception)
-  #  FlurryAnalytics.logError("Uncaught", message:"Crash!", exception:exception)
-  #end
+  def uncaughtExceptionHandler(exception)
+    FlurryAnalytics.logError("Uncaught", message:"Crash!", exception:exception)
+  end
 
 end
