@@ -12,7 +12,7 @@ class CrimeMapController < UIViewController
     @didInitialZoom = false
     @didInitialPinZoom = false
     @theDate = NSDate.date
-    @thePoints = NSMutableArray.alloc.init
+    @thePoints = []
 
   	#Set the application title
   	#self.title = "Winston-Salem Crime Map"
@@ -25,11 +25,18 @@ class CrimeMapController < UIViewController
 
     #Create buttons
     reZoomButton = UIBarButtonItem.alloc.initWithImage(
-      UIImage.imageNamed("location.png"), 
+      UIImage.imageNamed("location"), 
       style: UIBarButtonItemStyleBordered, 
       target: self, 
       action: "rezoom:")
-  	self.navigationItem.rightBarButtonItem = reZoomButton
+    self.navigationItem.rightBarButtonItem = reZoomButton
+
+    listButton = UIBarButtonItem.alloc.initWithImage(
+      UIImage.imageNamed("magnify"), 
+      style: UIBarButtonItemStyleBordered, 
+      target: self, 
+      action: "showDetail:")
+    self.navigationItem.leftBarButtonItem = listButton
 
     buttonItem1 = UIBarButtonItem.alloc.initWithTitle(
       "About",
@@ -156,7 +163,6 @@ class CrimeMapController < UIViewController
     @dateButton.title = theNewDate
 
     #Add the points to the map
-    p @thePoints.count
     @thePoints.each do |crime|
       @mapView.addAnnotation(crime)
     end
@@ -225,6 +231,22 @@ class CrimeMapController < UIViewController
     self.navigationController.presentModalViewController(aboutNavController, animated:true)
   end
 
+  def showDetail(sender)
+
+    if @thePoints.length == 0
+        App.alert("There are no incidents to view.")
+        return
+    end
+
+    detailViewController = DetailController.alloc.initWithData( @thePoints, date:@dateButton.title )
+    detailNavController = MyNavigationController.alloc.initWithRootViewController(detailViewController)
+    detailNavController.setModalTransitionStyle(UIModalTransitionStyleFlipHorizontal)
+    detailNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
+
+    self.navigationController.presentModalViewController(detailNavController, animated:true)
+
+  end
+
   #Present the calendar view to change the date.
   def changeDate(sender)
     puts "Changing the date"
@@ -289,12 +311,12 @@ class CrimeMapController < UIViewController
 
   #CKCalendarView delegate method for when a date is tapped
   def calendar(calendar, didSelectDate:date)
-    p "Selecting date: " + date.to_s
+    #p "Selecting date: " + date.to_s
 
     if @theDate.isEqualToDate(date) == false
 
       if date.isLaterThanDate(NSDate.date)
-        App.alert("The US. Department of Precognitive Crime has not been established yet.\n\nUntil then, please select a date in the past.")
+        App.alert("Please select a date in the past.")
         return;
       end
           
