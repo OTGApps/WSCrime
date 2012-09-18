@@ -1,6 +1,6 @@
 #Winston-Salem Crime Map
 
-![](resources/Icon@2x.png)
+![](https://raw.github.com/markrickert/WSCrime/master/resources/Icon@2x.png)
 
 This application was originally written in pure Dbjective-C and submitted to the app store. It went through multiple iterations as an XCode project until I heard about [RubyMotion](http://www.rubymotion.com/) and decided to use it as a chance to notonly simplify the codebase for this app, but also to learn Ruby in the meantime.
 
@@ -14,7 +14,7 @@ This app is a *universal application* (meaning that it works on both the iPhone 
 
 You can get the app one of two ways:
 
-1. Clone this repos and run it in the siumlator (or on a device if you are a registered Apple Developer). ```git clone git@github.com:markrickert/2. WSCrimeMap.git```
+1. Clone this repos and run it in the siumlator (or on a device if you are a registered Apple Developer). ```git clone git://github.com/markrickert/WSCrime.git```
 2. Get it from the iTunes App Store:
 
 [![image](http://ax.phobos.apple.com.edgesuite.net/images/web/linkmaker/badge_appstore-lrg.gif)](http://click.linksynergy.com/fs-bin/stat?id=**BiWowje1A&offerid=146261&type=3&subid=0&tmpid=1826&RD_PARM1=http%253A%252F%252Fitunes.apple.com%252Fus%252Fapp%252Fwinston-salem-crime-map%252Fid472546582%253Fmt%253D8%2526uo%253D4%2526partnerId%253D30)
@@ -36,8 +36,8 @@ You can get the app one of two ways:
 
 ##Screenshots
 
-![](Marketing/Screenshots/1.5/iPhone-small/1.png)
-![](Marketing/Screenshots/1.5/iPhone-small/2.png)
-![](Marketing/Screenshots/1.5/iPhone-small/3.png)
-![](Marketing/Screenshots/1.5/iPhone-small/4.png)
-![](Marketing/Screenshots/1.5/iPhone-small/5.png)
+![](https://raw.github.com/markrickert/WSCrime/master/Marketing/Screenshots/1.5/iPhone-small/1.png)
+![](https://raw.github.com/markrickert/WSCrime/master/Marketing/Screenshots/1.5/iPhone-small/2.png)
+![](https://raw.github.com/markrickert/WSCrime/master/Marketing/Screenshots/1.5/iPhone-small/3.png)
+![](https://raw.github.com/markrickert/WSCrime/master/Marketing/Screenshots/1.5/iPhone-small/4.png)
+![](https://raw.github.com/markrickert/WSCrime/master/Marketing/Screenshots/1.5/iPhone-small/5.png)
