@@ -1,4 +1,3 @@
-=begin
 Copyright (c) 2012 Mark Rickert
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of 
@@ -18,63 +17,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
 THE SOFTWARE.
-=end
-
-class CrimeAnnotation
-
-  #Creates the new crime object
-  def initialize(crime, type)
-    @crime = crime
-   	@coordinate = CLLocationCoordinate2D.new
-    @type = type
-  end
-
-  #Return the offence locaton
-  def title
-    @crime['location']
-  end
-
-  #Return the date and the charge
-  def subtitle
-    time + ": " + @crime['offense_charge']
-  end
-  
-  #Return the date
-  def date
-    @crime['date_day']
-  end
-  
-  def time
-    @crime['date_time']
-  end
-
-  def sortableTime
-    @crime['timestamp']
-  end
-  
-  def coordinate
-    @coordinate.latitude = @crime['latitude']
-    @coordinate.longitude = @crime['longitude']
-    
-    @coordinate
-  end
-
-  def pinColor
-    if @type == "Arrest"
-      MKPinAnnotationColorRed
-    else
-      MKPinAnnotationColorPurple
-    end
-  end
-
-  def pinImage
-    if @type == "Arrest"
-      "pinannotation_red"
-    else
-      "pinannotation_purple"
-    end
-  end
-
-  def type; @type; end
-  
-end
