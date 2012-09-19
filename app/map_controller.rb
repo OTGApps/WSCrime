@@ -337,8 +337,8 @@ class MapController < UIViewController
 
     if @theDate.isEqualToDate(date) == false
 
-      if date.isLaterThanDate(NSDate.date)
-        App.alert("Please select a date in the past.")
+      if date.laterDate(Time.now) == date
+        App.alert("Please select a date\nin the past.")
         return;
       end
           
