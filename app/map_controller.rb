@@ -38,7 +38,6 @@ class MapController < UIViewController
     @didInitialZoom = false
     @didInitialPinZoom = false
     @theDate = NSDate.date
-    @thePoints = []
 
   	#Set the application title
   	#self.title = "Winston-Salem Crime Map"
@@ -116,7 +115,7 @@ class MapController < UIViewController
     end
   end    
 
-  #This method loads the data from my server and sets the data into the @thePoints var
+  #This method loads the data from my server and sets the data into the map annotations
   def loadData
     @dateButton.title = "Loading data..."
     @activityView.startAnimating
@@ -132,19 +131,18 @@ class MapController < UIViewController
           json = BubbleWrap::JSON.parse(response.body.to_str)
 
           if json.count > 0
-            @thePoints.removeAllObjects
+            removeAllAnnotations
 
-            maxPoints = 5
-            pointCounter = 0
+            #maxPoints = 30
+            #pointCounter = 0
             json.each do |crimeData|
-              if pointCounter <= maxPoints
-                @thePoints.push(CrimeAnnotation.new(crimeData, crimeData['type']))
-                pointCounter++
-              end
+              #if pointCounter <= maxPoints
+                self.view.addAnnotation(CrimeAnnotation.new(crimeData, crimeData['type']))
+                #pointCounter += 1
+              #end
             end
 
-            #Re-layout all the data on the mapView
-            replot
+            dateAndZoom
 
           else
             App.alert("No Results Found for that day.")
@@ -152,8 +150,6 @@ class MapController < UIViewController
             @dateButton.title = "No Results"
             removeAllAnnotations
           end
-
-          #p @thePoints
 
         else
           App.alert("Whoops! There was an error downloading data from the server. Please check your internet connection or try again later.")
@@ -165,21 +161,19 @@ class MapController < UIViewController
   end
 
   def removeAllAnnotations
-    self.view.annotations.each do |thisAnnotation|
+    annotations.each do |thisAnnotation|
       self.view.removeAnnotation(thisAnnotation)
     end
   end
 
-  def replot
-    p "Replotting"
+  def dateAndZoom
+    p "Checking the date of the annotations and zooming appropriately."
 
     @dateButton.title = @theDate.to_s
     @activityView.stopAnimating
 
-    removeAllAnnotations
-
     #Get the first crime so we can make sure @theDate is set correctly for our data
-    firstAnnotation = @thePoints[0]
+    firstAnnotation = annotations[0]
 
     dateFormat = NSDateFormatter.alloc.init
     dateFormat.setDateFormat("yyyy-MM-dd")
@@ -191,11 +185,6 @@ class MapController < UIViewController
     theNewDate = dateFormat.stringFromDate(@theDate)
 
     @dateButton.title = theNewDate
-
-    #Add the points to the map
-    @thePoints.each do |crime|
-      self.view.addAnnotation(crime)
-    end
 
     #Only change the map zoom if this is the first data load.
     if @didInitialPinZoom == false
@@ -221,7 +210,7 @@ class MapController < UIViewController
   def rezoom(sender)
 
     #Don't attempt the rezoom of there are no pins
-    if self.view.annotations.count == 0
+    if annotations.length == 0
       return
     end
 
@@ -230,7 +219,7 @@ class MapController < UIViewController
     bottomRightCoord = CLLocationCoordinate2DMake(90, -180)
 
     #Find the bounds of the pins
-    self.view.annotations.each do |crime|
+    annotations.each do |crime|
       topLeftCoord.longitude = [topLeftCoord.longitude, crime.coordinate.longitude].min
       topLeftCoord.latitude = [topLeftCoord.latitude, crime.coordinate.latitude].max
       bottomRightCoord.longitude = [bottomRightCoord.longitude, crime.coordinate.longitude].max
@@ -263,12 +252,12 @@ class MapController < UIViewController
 
   def showDetail(sender)
 
-    if @thePoints.length == 0
+    if annotations.length == 0
         App.alert("There are no incidents to view.")
         return
     end
 
-    detailViewController = DetailController.alloc.initWithData( @thePoints, date:@dateButton.title )
+    detailViewController = DetailController.alloc.initWithData( annotations, date:@dateButton.title )
     detailNavController = MyNavigationController.alloc.initWithRootViewController(detailViewController)
     detailNavController.setModalTransitionStyle(UIModalTransitionStyleFlipHorizontal)
     detailNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
@@ -370,6 +359,10 @@ class MapController < UIViewController
           @calendarView = nil
           @calendarHolder = nil
       end)
+  end
+
+  def annotations
+    self.view.annotations || []
   end
 
 end #MapController
