@@ -22,13 +22,17 @@ THE SOFTWARE.
 
 class MapController < UIViewController
 
+  #Constants
+  MetersPerMile = 1609.344
+  AnimationTime = 0.25
+  APIURL = "http://crimestats.mohawkapps.com/nc/winston-salem/?date="
+
   def viewDidLoad
 
-    @mapView = MKMapView.alloc.initWithFrame(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height))
-    @mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight
-    self.view.addSubview(@mapView)
-    @mapView.delegate = self
-
+    mapView = MKMapView.alloc.initWithFrame(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height))
+    mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight
+    self.view = mapView
+    view.delegate = self
 
     #Init instance values
     @didInitialZoom = false
@@ -102,10 +106,9 @@ class MapController < UIViewController
     if @didInitialZoom == false
 
       #Center on Winston-Salem.
-      metersPerMile = 1609.344
       initialLocation = CLLocationCoordinate2D.new(36.10, -80.26)
-      region = MKCoordinateRegionMakeWithDistance(initialLocation, 4 * metersPerMile, 4 * metersPerMile)
-      @mapView.setRegion(region, animated:true)
+      region = MKCoordinateRegionMakeWithDistance(initialLocation, 4 * MetersPerMile, 4 * MetersPerMile)
+      self.view.setRegion(region, animated:true)
 
       @didInitialZoom = true
     else
@@ -123,7 +126,7 @@ class MapController < UIViewController
     dateFormat.setDateFormat("yyyy-MM-dd")
     dateString = dateFormat.stringFromDate(@theDate)
 
-    BubbleWrap::HTTP.get("http://crimestats.mohawkapps.com/nc/winston-salem/?date=" + dateString) do |response|
+    BubbleWrap::HTTP.get(APIURL + dateString) do |response|
         if response.ok?
 
           json = BubbleWrap::JSON.parse(response.body.to_str)
@@ -131,8 +134,13 @@ class MapController < UIViewController
           if json.count > 0
             @thePoints.removeAllObjects
 
+            maxPoints = 5
+            pointCounter = 0
             json.each do |crimeData|
-              @thePoints.push(CrimeAnnotation.new(crimeData, crimeData['type']))
+              if pointCounter <= maxPoints
+                @thePoints.push(CrimeAnnotation.new(crimeData, crimeData['type']))
+                pointCounter++
+              end
             end
 
             #Re-layout all the data on the mapView
@@ -157,8 +165,8 @@ class MapController < UIViewController
   end
 
   def removeAllAnnotations
-    @mapView.annotations.each do |thisAnnotation|
-      @mapView.removeAnnotation(thisAnnotation)
+    self.view.annotations.each do |thisAnnotation|
+      self.view.removeAnnotation(thisAnnotation)
     end
   end
 
@@ -186,7 +194,7 @@ class MapController < UIViewController
 
     #Add the points to the map
     @thePoints.each do |crime|
-      @mapView.addAnnotation(crime)
+      self.view.addAnnotation(crime)
     end
 
     #Only change the map zoom if this is the first data load.
@@ -213,7 +221,7 @@ class MapController < UIViewController
   def rezoom(sender)
 
     #Don't attempt the rezoom of there are no pins
-    if @mapView.annotations.count == 0
+    if self.view.annotations.count == 0
       return
     end
 
@@ -222,7 +230,7 @@ class MapController < UIViewController
     bottomRightCoord = CLLocationCoordinate2DMake(90, -180)
 
     #Find the bounds of the pins
-    @mapView.annotations.each do |crime|
+    self.view.annotations.each do |crime|
       topLeftCoord.longitude = [topLeftCoord.longitude, crime.coordinate.longitude].min
       topLeftCoord.latitude = [topLeftCoord.latitude, crime.coordinate.latitude].max
       bottomRightCoord.longitude = [bottomRightCoord.longitude, crime.coordinate.longitude].max
@@ -237,8 +245,8 @@ class MapController < UIViewController
       ((topLeftCoord.latitude - bottomRightCoord.latitude) * 1.075).abs, 
       ((bottomRightCoord.longitude - topLeftCoord.longitude) * 1.075).abs)
     region = MKCoordinateRegionMake(coord, span)
-    fits = @mapView.regionThatFits(region);
-    @mapView.setRegion(fits, animated:true)
+    fits = self.view.regionThatFits(region);
+    self.view.setRegion(fits, animated:true)
   end
 
   #Present the about window in a moval view.
@@ -273,8 +281,6 @@ class MapController < UIViewController
   def changeDate(sender)
     puts "Changing the date"
 
-    @animationTime = 0.25
-
     #Show the calendar.
     p @calendarHolder
     if @calendarHolder != nil
@@ -282,13 +288,13 @@ class MapController < UIViewController
       return
     end
 
-    @calendarHolder = UIView.alloc.initWithFrame(@mapView.frame)
+    @calendarHolder = UIView.alloc.initWithFrame(self.view.frame)
     @calendarView = CKCalendarView.alloc.initWithStartDay(1)
     @calendarView.delegate = self
     @calendarView.selectedDate = @theDate
 
     #Position the calendar view
-    screenBounds = @mapView.bounds
+    screenBounds = self.view.bounds
     calendarWidth = 300
     calendarHeight = 300
 
@@ -305,7 +311,7 @@ class MapController < UIViewController
       UIViewAutoresizingFlexibleRightMargin)
     
     @calendarView.frame = calendarBounds;
-    @calendarView.setCenter(@mapView.center)
+    @calendarView.setCenter(self.view.center)
 
     @calendarHolder.addSubview(@calendarView)
 
@@ -320,7 +326,7 @@ class MapController < UIViewController
 
     self.view.addSubview(@calendarHolder)
 
-    UIView.animateWithDuration(@animationTime,
+    UIView.animateWithDuration(AnimationTime,
         delay:0,
         options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationCurveEaseOut | UIViewAnimationOptionBeginFromCurrentState,
         animations: -> do
@@ -351,7 +357,7 @@ class MapController < UIViewController
 
   #Goodbye, calendar!
   def destroyCalendar
-    UIView.animateWithDuration(@animationTime,
+    UIView.animateWithDuration(AnimationTime,
       delay:0,
       options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationCurveEaseOut | UIViewAnimationOptionBeginFromCurrentState,
       animations: -> do  
