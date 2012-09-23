@@ -135,12 +135,15 @@ class MapController < UIViewController
 
             #maxPoints = 30
             #pointCounter = 0
+            annotations = []
             json.each do |crimeData|
               #if pointCounter <= maxPoints
-                self.view.addAnnotation(CrimeAnnotation.new(crimeData, crimeData['type']))
-                #pointCounter += 1
+                annotations << CrimeAnnotation.new(crimeData)
+              #  pointCounter += 1
               #end
             end
+
+            self.view.addAnnotations(annotations)
 
             dateAndZoom
 

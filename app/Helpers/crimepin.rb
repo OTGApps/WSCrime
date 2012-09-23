@@ -23,9 +23,10 @@ THE SOFTWARE.
 class CrimeAnnotation
 
   #Creates the new crime object
-  def initialize(crime, type)
+  def initialize(crime)
     @crime = crime
-    @type = type
+    @type = @crime['type']
+    @coordinate = CLLocationCoordinate2DMake(@crime['latitude'], @crime['longitude'])
   end
 
   #Return the offence locaton
@@ -52,7 +53,7 @@ class CrimeAnnotation
   end
   
   def coordinate
-    CLLocationCoordinate2DMake(@crime['latitude'], @crime['longitude'])
+    @coordinate
   end
 
   def pinColor
@@ -73,4 +74,8 @@ class CrimeAnnotation
 
   def type; @type; end
   
+  def setCoordinate(newCoordinate);
+    @coordinate = newCoordinate
+  end
+ 
 end
