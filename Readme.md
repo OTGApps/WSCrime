@@ -15,7 +15,7 @@ This app is a *universal application* (meaning that it works on both the iPhone 
 You can get the app one of two ways:
 
 1. Clone this repos and run it in the siumlator (or on a device if you are a registered Apple Developer). ```git clone git://github.com/markrickert/WSCrime.git```
-2. Get it from the iTunes App Store:
+2. Get it from the iTunes App Store (this is currently the **OLD** version wirtten in Objective-C. This version in RubyMotion has a few more features but a critical bug in iOS 6):
 
 [![image](http://ax.phobos.apple.com.edgesuite.net/images/web/linkmaker/badge_appstore-lrg.gif)](http://click.linksynergy.com/fs-bin/stat?id=**BiWowje1A&offerid=146261&type=3&subid=0&tmpid=1826&RD_PARM1=http%253A%252F%252Fitunes.apple.com%252Fus%252Fapp%252Fwinston-salem-crime-map%252Fid472546582%253Fmt%253D8%2526uo%253D4%2526partnerId%253D30)
 
@@ -33,6 +33,10 @@ You can get the app one of two ways:
 
 1. ```cd``` into the WSCrimeMap directory and run ```bundle update```
 2. Run ```rake``` and the application will build and launch the iOS simulator.
+
+##Bugs:
+
+Currently, the RubyMotion version of this app has a bug in iOS 6. It only rears its ugly head on an actual device and works perfectly on the simulator. I have yet to determine if this bug is in the actual source code or if it is a problem with the RubyMotion build system. Basically, when you run this app on a device, the pins jump all over the screen whenever you touch or move the map. I'm looking into a fix so i can submit this version to the App Store. [Google Groups discussion of this bug.](https://groups.google.com/forum/?fromgroups=#!topic/rubymotion/_14RA03kkUI)
 
 ##Screenshots
 
