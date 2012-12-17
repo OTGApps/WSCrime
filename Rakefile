@@ -13,13 +13,15 @@ Motion::Project::App.setup do |app|
   app.version = '8'
   app.short_version = '1.5'
   app.interface_orientations = [:portrait, :landscape_left, :landscape_right, :portrait_upside_down]
-  app.sdk_version = "6.0"
   app.deployment_target = "5.0"
 
   #Add Flurry Analytics as a static library.
   app.vendor_project('vendor/FlurryAnalytics', :static,
     :products => ['libFlurryAnalytics.a'],
     :headers_dir => 'vendor/FlurryAnalytics')
+  
+  app.vendor_project('vendor/CrimePin', :xcode,
+    :headers_dir => 'CrimePin')
 
   app.pods do
     pod 'CKCalendar'
@@ -29,7 +31,7 @@ Motion::Project::App.setup do |app|
   app.development do
     app.entitlements['get-task-allow'] = true
     app.codesign_certificate = "iPhone Developer: Mark Rickert (YA2VZGDX4S)"
-    app.provisioning_profile = "/Volumes/mrickert/Library/MobileDevice/Provisioning\ Profiles/EF63CB15-B5E7-4FB6-9A8C-07A8F09AA8AD.mobileprovision"  
+    app.provisioning_profile = "/Volumes/mrickert/Library/MobileDevice/Provisioning\ Profiles/WSCMDevelop.mobileprovision"  
   end
 
   app.release do

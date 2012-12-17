@@ -30,7 +30,9 @@ class AppDelegate
 
     NSSetUncaughtExceptionHandler("uncaughtExceptionHandler")
     FlurryAnalytics.startSession("VNHHFKB2GK8BT22TPQRK")
-    FlurryAnalytics.setUserID('markrickert')
+    if Device.simulator?
+      FlurryAnalytics.setUserID('markrickert')
+    end
 
     Appirater.setAppId "472546582"
     Appirater.setDaysUntilPrompt 5

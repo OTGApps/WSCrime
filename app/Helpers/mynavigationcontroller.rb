@@ -20,6 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 =end
 
+# UINavigationController subclass to to help handle orientation changes, etc.
 class MyNavigationController < UINavigationController
 
 	def supportedInterfaceOrientations

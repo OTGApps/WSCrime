@@ -19,13 +19,12 @@ You can get the app one of two ways:
 
 [![image](http://ax.phobos.apple.com.edgesuite.net/images/web/linkmaker/badge_appstore-lrg.gif)](http://click.linksynergy.com/fs-bin/stat?id=**BiWowje1A&offerid=146261&type=3&subid=0&tmpid=1826&RD_PARM1=http%253A%252F%252Fitunes.apple.com%252Fus%252Fapp%252Fwinston-salem-crime-map%252Fid472546582%253Fmt%253D8%2526uo%253D4%2526partnerId%253D30)
 
-
 ##Running the app
 
 ###Prerequisites:
 
 1. XCode 4.5 with iOS 6 SDK.
-2. You must have a registered and licensed copy or RubyMotion on your computer. If you do not, you will need to [purchase a license here](http://www.rubymotion.com/).
+2. You must have a registered and licensed copy or RubyMotion on your computer. If you do not, you will need to [purchase a license here](http://www.rubymotion.com/). Winston-Salem Crime Map requires at least RubyMotion 1.27 or later.
 3. [Cocoapods](http://cocoapods.org/) must be installed.
 4. Valid Apple Developer signing certificate (if you want to install on a device).
 
@@ -33,10 +32,6 @@ You can get the app one of two ways:
 
 1. ```cd``` into the WSCrimeMap directory and run ```bundle update```
 2. Run ```rake``` and the application will build and launch the iOS simulator.
-
-##Bugs:
-
-Currently, the RubyMotion version of this app has a bug in iOS 6. It only rears its ugly head on an actual device and works perfectly on the simulator. I have yet to determine if this bug is in the actual source code or if it is a problem with the RubyMotion build system. Basically, when you run this app on a device, the pins jump all over the screen whenever you touch or move the map. I'm looking into a fix so i can submit this version to the App Store. [Google Groups discussion of this bug.](https://groups.google.com/forum/?fromgroups=#!topic/rubymotion/_14RA03kkUI)
 
 ##Screenshots
 

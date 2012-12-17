@@ -40,7 +40,6 @@ class MapController < UIViewController
     @theDate = NSDate.date
 
   	#Set the application title
-  	#self.title = "Winston-Salem Crime Map"
     self.setTitle("Crime Map", subtitle:"Winston-Salem, NC")
     
     #Setup the toolbar and navigationbar
@@ -133,14 +132,9 @@ class MapController < UIViewController
           if json.count > 0
             removeAllAnnotations
 
-            #maxPoints = 30
-            #pointCounter = 0
             annotations = []
             json.each do |crimeData|
-              #if pointCounter <= maxPoints
-                annotations << CrimeAnnotation.new(crimeData)
-              #  pointCounter += 1
-              #end
+                annotations << CrimePin.alloc.init(crimeData)
             end
 
             self.view.addAnnotations(annotations)
@@ -260,7 +254,7 @@ class MapController < UIViewController
         return
     end
 
-    detailViewController = DetailController.alloc.initWithData( annotations, date:@dateButton.title )
+    detailViewController = DetailController.alloc.initWithData( annotations.mutableCopy, date:@dateButton.title )
     detailNavController = MyNavigationController.alloc.initWithRootViewController(detailViewController)
     detailNavController.setModalTransitionStyle(UIModalTransitionStyleFlipHorizontal)
     detailNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
@@ -306,10 +300,6 @@ class MapController < UIViewController
     @calendarView.setCenter(self.view.center)
 
     @calendarHolder.addSubview(@calendarView)
-
-    #@calendarHolder.whenTapped do
-    #  destroyCalendar
-    #end
 
     @calendarHolder.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight
     @calendarHolder.alpha = 0
