@@ -2,7 +2,7 @@
 
 ![](https://raw.github.com/markrickert/WSCrime/master/resources/Icon@2x.png)
 
-This application was originally written in pure Dbjective-C and submitted to the app store. It went through multiple iterations as an XCode project until I heard about [RubyMotion](http://www.rubymotion.com/) and decided to use it as a chance to notonly simplify the codebase for this app, but also to learn Ruby in the meantime.
+This application was originally written in pure Objective-C and submitted to the app store. It went through multiple iterations as an XCode project until I heard about [RubyMotion](http://www.rubymotion.com/) and decided to use it as a chance to not only simplify the codebase for this app, but also to learn Ruby in the meantime.
 
 Since I used this as a learning experience, I also wanted to put the code out there for others to learn from and to improve upon (iOS client only, not the server scraper and API).
 
