@@ -20,8 +20,6 @@ Motion::Project::App.setup do |app|
     :products => ['libFlurryAnalytics.a'],
     :headers_dir => 'vendor/FlurryAnalytics')
   
-  app.vendor_project('vendor/CrimePin', :xcode,
-    :headers_dir => 'CrimePin')
 
   app.pods do
     pod 'CKCalendar'

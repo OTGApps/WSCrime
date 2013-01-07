@@ -24,7 +24,7 @@ You can get the app one of two ways:
 ###Prerequisites:
 
 1. XCode 4.5 with iOS 6 SDK.
-2. You must have a registered and licensed copy or RubyMotion on your computer. If you do not, you will need to [purchase a license here](http://www.rubymotion.com/). Winston-Salem Crime Map requires at least RubyMotion 1.27 or later.
+2. You must have a registered and licensed copy or RubyMotion on your computer. If you do not, you will need to [purchase a license here](http://www.rubymotion.com/). Winston-Salem Crime Map requires at least RubyMotion 1.30 or later.
 3. [Cocoapods](http://cocoapods.org/) must be installed.
 4. Valid Apple Developer signing certificate (if you want to install on a device).
 

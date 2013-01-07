@@ -134,7 +134,7 @@ class MapController < UIViewController
 
             annotations = []
             json.each do |crimeData|
-                annotations << CrimePin.alloc.init(crimeData)
+                annotations << CrimeAnnotation.new(crimeData)
             end
 
             self.view.addAnnotations(annotations)
@@ -235,7 +235,7 @@ class MapController < UIViewController
     self.view.setRegion(fits, animated:true)
   end
 
-  #Present the about window in a moval view.
+  #Present the about window in a modal view.
   def loadAboutWindow(sender)
 
     App::Persistence['seenAbout'] = "yes"
