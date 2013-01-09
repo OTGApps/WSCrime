@@ -1,0 +1,3 @@
+[submodule "vendor/ARKit/ARKitLib"]
+	path = vendor/ARKit/ARKitLib
+	url = git@github.com:markrickert/iPhone-AR-Toolkit.git
