@@ -62,11 +62,17 @@ class MapController < UIViewController
       action: "showDetail:")
     self.navigationItem.leftBarButtonItem = listButton
 
-    buttonItem1 = UIBarButtonItem.alloc.initWithTitle(
+    aboutButton = UIBarButtonItem.alloc.initWithTitle(
       "About",
       style: UIBarButtonItemStyleBordered,
       target: self,
       action: "loadAboutWindow:")
+
+    arButton = UIBarButtonItem.alloc.initWithImage(
+      UIImage.imageNamed("radar"),
+      style: UIBarButtonItemStyleBordered,
+      target: self,
+      action: "loadARWindow:")
 
   	flexibleSpace = UIBarButtonItem.alloc.initWithBarButtonSystemItem(
   		UIBarButtonSystemItemFlexibleSpace,
@@ -84,7 +90,11 @@ class MapController < UIViewController
        target: self,
        action: "changeDate:")
     
-    self.toolbarItems = [buttonItem1, flexibleSpace, @activityViewButton, @dateButton]
+    if ARKit.deviceSupportsAR || Device.simulator?
+      self.toolbarItems = [aboutButton, arButton, flexibleSpace, @activityViewButton, @dateButton]
+    else
+      self.toolbarItems = [aboutButton, flexibleSpace, @activityViewButton, @dateButton]
+    end
 
     #Send a request off to the server to get the data.
     loadData
@@ -96,6 +106,9 @@ class MapController < UIViewController
     unless seenAbout == "yes"
       loadAboutWindow(nil)
     end
+
+    self.navigationController.setToolbarHidden(false, animated:true)
+
   end
 
   def viewWillAppear(animated)
@@ -356,6 +369,44 @@ class MapController < UIViewController
 
   def annotations
     self.view.annotations || []
+  end
+
+
+  # Augmented Reality
+
+  def loadARWindow(sender)
+
+    if annotations.length == 0
+        App.alert("There are no incidents to view.")
+        return
+    end
+
+    if ARKit.deviceSupportsAR || Device.simulator?
+
+        arVC = ARViewController.alloc.initWithDelegate( self )
+        arVC.setRadarRange(4000.0)
+        arVC.setOnlyShowItemsWithinRadarRange(false)
+        puts self.navigationController
+        self.navigationController.setToolbarHidden(true, animated:true)
+        self.navigationController.pushViewController(arVC, animated:true)
+
+    end
+  end
+
+  def geoLocations
+    
+    locationArray = []
+
+    annotations.each do |thisAnnotation|
+      locationArray << ARGeoCoordinate.coordinateWithLocation(thisAnnotation.cllocation, locationTitle:thisAnnotation.offense)
+    end
+    puts locationArray
+    
+    locationArray
+  end
+
+  def locationClicked(coordinate)
+    puts coordinate
   end
 
 end #MapController

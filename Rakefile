@@ -8,18 +8,21 @@ Bundler.require
 Motion::Project::App.setup do |app|
   app.name = 'W-S Crime'
   app.identifier = 'com.mohawkapps.Winston-Salem-Crime'
-  app.frameworks += ['CoreLocation', 'MapKit']
+  app.frameworks += ['CoreLocation', 'MapKit', 'QuartzCore', 'AVFoundation', 'CoreGraphics']
   app.device_family = [:iphone, :ipad]
   app.version = '8'
   app.short_version = '1.5'
   app.interface_orientations = [:portrait, :landscape_left, :landscape_right, :portrait_upside_down]
-  app.deployment_target = "5.0"
+  app.deployment_target = "5.1"
 
   #Add Flurry Analytics as a static library.
   app.vendor_project('vendor/FlurryAnalytics', :static,
     :products => ['libFlurryAnalytics.a'],
     :headers_dir => 'vendor/FlurryAnalytics')
   
+  #app.vendor_project('vendor/ARKit/ARKit', :static)
+  app.vendor_project('vendor/ARKit', :xcode,
+    :headers_dir => 'ARKitLib/ARKit')
 
   app.pods do
     pod 'CKCalendar'

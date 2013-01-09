@@ -36,7 +36,11 @@ class CrimeAnnotation
 
   #Return the date and the charge
   def subtitle
-    time + ": " + @crime['offense_charge']
+    time + ": " + offense
+  end
+  
+  def offense
+    @crime['offense_charge']
   end
   
   #Return the date
@@ -54,6 +58,10 @@ class CrimeAnnotation
   
   def coordinate
     @coordinate
+  end
+
+  def cllocation
+    CLLocation.alloc.initWithLatitude(@crime['latitude'], longitude:@crime['longitude'])
   end
 
   def pinColor
