@@ -385,9 +385,10 @@ class MapController < UIViewController
 
         arVC = ARViewController.alloc.initWithDelegate( self )
         arVC.setRadarRange(4000.0)
-        arVC.setOnlyShowItemsWithinRadarRange(false)
-        puts self.navigationController
-        self.navigationController.setToolbarHidden(true, animated:true)
+        arVC.setOnlyShowItemsWithinRadarRange(true)
+        arVC.showsCloseButton = false
+        arVC.setHidesBottomBarWhenPushed(true)
+
         self.navigationController.pushViewController(arVC, animated:true)
 
     end
@@ -397,11 +398,21 @@ class MapController < UIViewController
     
     locationArray = []
 
-    annotations.each do |thisAnnotation|
-      locationArray << ARGeoCoordinate.coordinateWithLocation(thisAnnotation.cllocation, locationTitle:thisAnnotation.offense)
-    end
-    puts locationArray
-    
+     annotations.each do |thisAnnotation|
+       locationArray << ARGeoCoordinate.coordinateWithLocation(thisAnnotation.cllocation, locationTitle:thisAnnotation.offense)
+     end
+
+    # Testing code with random AR points within the map region.
+    # region = self.view.region
+    # 50.times do
+    #   loc = CLLocation.alloc.initWithLatitude(
+    #     region.center.latitude + region.span.latitudeDelta * (rand - 0.5), 
+    #     longitude:region.center.longitude + region.span.longitudeDelta * (rand - 0.5)
+    #   )
+
+    #   locationArray << ARGeoCoordinate.coordinateWithLocation(loc, locationTitle:locationArray.size.to_s)
+    # end
+
     locationArray
   end
 
