@@ -22,6 +22,8 @@ THE SOFTWARE.
 
 class CrimeAnnotation
 
+  attr_accessor :type
+
   #Creates the new crime object
   def initialize(crime)
     @crime = crime
@@ -79,8 +81,6 @@ class CrimeAnnotation
       "pinannotation_purple"
     end
   end
-
-  def type; @type; end
   
   def setCoordinate(newCoordinate);
     @coordinate = newCoordinate
