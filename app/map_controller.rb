@@ -22,6 +22,8 @@ THE SOFTWARE.
 
 class MapController < UIViewController
 
+  include BW::Reactor
+
   #Constants
   MetersPerMile = 1609.344
   AnimationTime = 0.25
@@ -268,12 +270,35 @@ class MapController < UIViewController
     end
 
     detailViewController = DetailController.alloc.initWithData( annotations.mutableCopy, date:@dateButton.title )
+    detailViewController.parentVC = self
     detailNavController = PortraitNavigationController.alloc.initWithRootViewController(detailViewController)
     detailNavController.setModalTransitionStyle(UIModalTransitionStyleFlipHorizontal)
     detailNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
 
     self.navigationController.presentModalViewController(detailNavController, animated:true)
 
+  end
+
+  def closeDetailAndZoomToEvent(marker)
+    self.navigationController.dismissModalViewControllerAnimated(true)
+    
+    # Close all the annotations just in case
+    unless self.view.selectedAnnotations.nil?
+      self.view.selectedAnnotations.each do |annotation|
+        self.view.deselectAnnotation(annotation, animated:false)
+      end
+    end
+
+    EM.add_timer 0.75 do
+      zoomToAndSelectMarker( marker )
+    end
+
+  end
+
+  def zoomToAndSelectMarker(marker)
+    region = MKCoordinateRegionMake( marker.coordinate, MKCoordinateSpanMake( 0.1, 0.1 ) )
+    self.view.setRegion(region, animated:true)
+    self.view.selectAnnotation(marker, animated:true)
   end
 
   #Present the calendar view to change the date.
@@ -388,6 +413,7 @@ class MapController < UIViewController
         arVC.setOnlyShowItemsWithinRadarRange(true)
         arVC.showsCloseButton = false
         arVC.setHidesBottomBarWhenPushed(true)
+        arVC.setRotateViewsBasedOnPerspective(false)
 
         self.navigationController.pushViewController(arVC, animated:true)
 
@@ -401,17 +427,6 @@ class MapController < UIViewController
      annotations.each do |thisAnnotation|
        locationArray << ARGeoCoordinate.coordinateWithLocation(thisAnnotation.cllocation, locationTitle:thisAnnotation.offense)
      end
-
-    # Testing code with random AR points within the map region.
-    # region = self.view.region
-    # 50.times do
-    #   loc = CLLocation.alloc.initWithLatitude(
-    #     region.center.latitude + region.span.latitudeDelta * (rand - 0.5), 
-    #     longitude:region.center.longitude + region.span.longitudeDelta * (rand - 0.5)
-    #   )
-
-    #   locationArray << ARGeoCoordinate.coordinateWithLocation(loc, locationTitle:locationArray.size.to_s)
-    # end
 
     locationArray
   end

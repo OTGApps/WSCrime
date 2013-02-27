@@ -22,6 +22,8 @@ THE SOFTWARE.
 
 class DetailController < UIViewController
 
+  attr_accessor :parentVC
+
   def initWithData(data, date:date)
     @data = data
     @data.sort! { |a,b| a.sortableTime <=> b.sortableTime }
@@ -76,9 +78,10 @@ class DetailController < UIViewController
     end
 
     cell.imageView.image = UIImage.imageNamed( @data[indexPath.row].pinImage )
-    cell.selectionStyle = UITableViewCellSelectionStyleNone
+    cell.selectionStyle = UITableViewCellSelectionStyleBlue
     cell.textLabel.text = "#{@data[indexPath.row].title}"
     cell.detailTextLabel.text = "#{@data[indexPath.row].subtitle}"
+    cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton
 
     return cell
   end
@@ -98,6 +101,23 @@ class DetailController < UIViewController
   
   def closeModal
     self.navigationController.dismissModalViewControllerAnimated(true)
+  end
+
+  # Tap on table Row
+  def tableView(tableView, didSelectRowAtIndexPath:indexPath)
+    tappedCrime( @data[indexPath.row] )
+  end
+
+  # Tap on row accessory
+  def tableView(tableView, accessoryButtonTappedForRowWithIndexPath:indexPath)
+    tappedCrime( @data[indexPath.row] )
+  end
+
+
+  def tappedCrime(marker)
+    unless @parentVC.nil?
+      @parentVC.closeDetailAndZoomToEvent(marker)
+    end
   end
 
   def incidentCount
