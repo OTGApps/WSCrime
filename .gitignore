@@ -28,3 +28,4 @@ DerivedData/
 xcuserdata
 !xcshareddata
 *.moved-aside
+/Provisioning/

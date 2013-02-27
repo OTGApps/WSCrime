@@ -32,12 +32,12 @@ Motion::Project::App.setup do |app|
   app.development do
     app.entitlements['get-task-allow'] = true
     app.codesign_certificate = "iPhone Developer: Mark Rickert (YA2VZGDX4S)"
-    app.provisioning_profile = "/Volumes/mrickert/Library/MobileDevice/Provisioning\ Profiles/WSCMDevelop.mobileprovision"  
+    app.provisioning_profile = "./Provisioning/WSCMDevelop.mobileprovision"  
   end
 
   app.release do
     app.codesign_certificate = "iPhone Distribution: Mohawk Apps, LLC"
-    app.provisioning_profile = "/Volumes/mrickert/Library/MobileDevice/Provisioning\ Profiles/398F0715-559F-4861-8FF4-D828F6263DC6.mobileprovision"  
+    app.provisioning_profile = "./Provisioning/WSCMDistribute.mobileprovision"  
   end
 
 end
