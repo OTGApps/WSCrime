@@ -254,7 +254,7 @@ class MapController < UIViewController
     App::Persistence['seenAbout'] = "yes"
 
     aboutViewController = AboutController.alloc.init
-    aboutNavController = MyNavigationController.alloc.initWithRootViewController(aboutViewController)
+    aboutNavController = PortraitNavigationController.alloc.initWithRootViewController(aboutViewController)
     aboutNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
 
     self.navigationController.presentModalViewController(aboutNavController, animated:true)
@@ -268,7 +268,7 @@ class MapController < UIViewController
     end
 
     detailViewController = DetailController.alloc.initWithData( annotations.mutableCopy, date:@dateButton.title )
-    detailNavController = MyNavigationController.alloc.initWithRootViewController(detailViewController)
+    detailNavController = PortraitNavigationController.alloc.initWithRootViewController(detailViewController)
     detailNavController.setModalTransitionStyle(UIModalTransitionStyleFlipHorizontal)
     detailNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
 

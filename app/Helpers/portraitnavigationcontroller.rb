@@ -21,7 +21,7 @@ THE SOFTWARE.
 =end
 
 # UINavigationController subclass to to help handle orientation changes, etc.
-class MyNavigationController < UINavigationController
+class PortraitNavigationController < UINavigationController
 
 	def supportedInterfaceOrientations
     # Only allow landscape if they're on an iPad
