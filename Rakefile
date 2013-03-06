@@ -14,11 +14,12 @@ Motion::Project::App.setup do |app|
   app.short_version = '1.6'
   app.interface_orientations = [:portrait, :landscape_left, :landscape_right, :portrait_upside_down]
   app.deployment_target = "5.1"
+  app.info_plist['APP_STORE_ID'] = 472546582
 
   #Add Flurry Analytics as a static library.
-  app.vendor_project('vendor/FlurryAnalytics', :static,
-    :products => ['libFlurryAnalytics.a'],
-    :headers_dir => 'vendor/FlurryAnalytics')
+  app.vendor_project('vendor/Flurry', :static,
+    :products => ['libFlurry.a'],
+    :headers_dir => 'vendor/Flurry')
   
   #app.vendor_project('vendor/ARKit/ARKit', :static)
   app.vendor_project('vendor/ARKit', :xcode,

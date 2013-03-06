@@ -29,12 +29,12 @@ class AppDelegate
     @window.makeKeyAndVisible
 
     NSSetUncaughtExceptionHandler("uncaughtExceptionHandler")
-    FlurryAnalytics.startSession("VNHHFKB2GK8BT22TPQRK")
+    Flurry.startSession("VNHHFKB2GK8BT22TPQRK")
     if Device.simulator?
-      FlurryAnalytics.setUserID('markrickert')
+      Flurry.setUserID('simulator')
     end
 
-    Appirater.setAppId "472546582"
+    Appirater.setAppId NSBundle.mainBundle.objectForInfoDictionaryKey('APP_STORE_ID')
     Appirater.setDaysUntilPrompt 5
     Appirater.setUsesUntilPrompt 10
     Appirater.setTimeBeforeReminding 5
@@ -44,9 +44,8 @@ class AppDelegate
   end
 
   #Flurry exception handler
-  #Commented out till I can figure out how to implement Flurry
   def uncaughtExceptionHandler(exception)
-    FlurryAnalytics.logError("Uncaught", message:"Crash!", exception:exception)
+    Flurry.logError("Uncaught", message:"Crash!", exception:exception)
   end
 
   def applicationWillEnterForeground(application)
