@@ -20,36 +20,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 =end
 
-class AppDelegate
+# UINavigationController subclass to to help handle orientation changes, etc.
+class PortraitNavigationController < UINavigationController
 
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    @window.rootViewController = PortraitNavigationController.alloc.initWithRootViewController(MapController.alloc.init)
-    @window.rootViewController.wantsFullScreenLayout = true
-    @window.makeKeyAndVisible
-
-    NSSetUncaughtExceptionHandler("uncaughtExceptionHandler")
-    Flurry.startSession("VNHHFKB2GK8BT22TPQRK")
-    if Device.simulator?
-      Flurry.setUserID('simulator')
+	def supportedInterfaceOrientations
+    # Only allow landscape if they're on an iPad
+    if Device.iphone?
+      UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown
+    else
+      UIInterfaceOrientationMaskAll
     end
-
-    Appirater.setAppId NSBundle.mainBundle.objectForInfoDictionaryKey('APP_STORE_ID')
-    Appirater.setDaysUntilPrompt 5
-    Appirater.setUsesUntilPrompt 10
-    Appirater.setTimeBeforeReminding 5
-    Appirater.appLaunched true
-
-    true
   end
 
-  #Flurry exception handler
-  def uncaughtExceptionHandler(exception)
-    Flurry.logError("Uncaught", message:"Crash!", exception:exception)
-  end
-
-  def applicationWillEnterForeground(application)
-    Appirater.appEnteredForeground true
+  def shouldAutorotateToInterfaceOrientation(interfaceOrientation)
+    if Device.iphone?
+      interfaceOrientation == UIInterfaceOrientationPortrait || interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown
+    else
+      true
+    end
   end
 
 end

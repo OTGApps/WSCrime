@@ -1,22 +1,22 @@
 =begin
 Copyright (c) 2012 Mark Rickert
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of 
-this software and associated documentation files (the "Software"), to deal in 
-the Software without restriction, including without limitation the rights to 
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
-of the Software, and to permit persons to whom the Software is furnished to do 
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
 so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in 
+The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 =end
 
@@ -37,7 +37,7 @@ class DetailController < UIViewController
     self.navigationController.navigationBar.barStyle = self.navigationController.toolbar.barStyle = UIBarStyleBlack
     self.navigationController.setToolbarHidden(false)
 
-    
+
     #Create the labe at the bottom of the view.
     @label = UILabel.alloc.initWithFrame(CGRectMake(0, 0, self.navigationController.toolbar.bounds.size.width, self.navigationController.toolbar.bounds.size.height))
     @label.backgroundColor = UIColor.clearColor
@@ -46,17 +46,17 @@ class DetailController < UIViewController
     @label.lineBreakMode = UILineBreakModeTailTruncation
     @label.font = UIFont.boldSystemFontOfSize 18
     @label.minimumFontSize = 10
-    @label.autoresizingMask = UIViewAutoresizingFlexibleWidth | 
-                                 UIViewAutoresizingFlexibleLeftMargin | 
+    @label.autoresizingMask = UIViewAutoresizingFlexibleWidth |
+                                 UIViewAutoresizingFlexibleLeftMargin |
                                  UIViewAutoresizingFlexibleRightMargin
 
     item = UIBarButtonItem.alloc.initWithCustomView(@label)
     self.toolbarItems = [item];
 
     backButton = UIBarButtonItem.alloc.initWithTitle(
-      "Done", 
-      style:UIBarButtonItemStyleDone, 
-      target:self, 
+      "Done",
+      style:UIBarButtonItemStyleDone,
+      target:self,
       action:"closeModal")
     self.navigationItem.rightBarButtonItem = backButton;
 
@@ -98,7 +98,7 @@ class DetailController < UIViewController
       0
     end
   end
-  
+
   def closeModal
     self.navigationController.dismissModalViewControllerAnimated(true)
   end

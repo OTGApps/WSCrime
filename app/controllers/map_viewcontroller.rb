@@ -1,22 +1,22 @@
 =begin
 Copyright (c) 2012 Mark Rickert
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of 
-this software and associated documentation files (the "Software"), to deal in 
-the Software without restriction, including without limitation the rights to 
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
-of the Software, and to permit persons to whom the Software is furnished to do 
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
 so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in 
+The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 =end
 
@@ -27,7 +27,6 @@ class MapController < UIViewController
   #Constants
   MetersPerMile = 1609.344
   AnimationTime = 0.25
-  APIURL = "http://crimestats.mohawkapps.com/nc/winston-salem/?date="
 
   def viewDidLoad
 
@@ -43,7 +42,7 @@ class MapController < UIViewController
 
   	#Set the application title
     self.setTitle("Crime Map", subtitle:"Winston-Salem, NC")
-    
+
     #Setup the toolbar and navigationbar
     self.navigationController.setToolbarHidden(false)
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
@@ -51,16 +50,16 @@ class MapController < UIViewController
 
     #Create buttons
     reZoomButton = UIBarButtonItem.alloc.initWithImage(
-      UIImage.imageNamed("location"), 
-      style: UIBarButtonItemStyleBordered, 
-      target: self, 
+      UIImage.imageNamed("location"),
+      style: UIBarButtonItemStyleBordered,
+      target: self,
       action: "rezoom:")
     self.navigationItem.rightBarButtonItem = reZoomButton
 
     listButton = UIBarButtonItem.alloc.initWithImage(
-      UIImage.imageNamed("magnify"), 
-      style: UIBarButtonItemStyleBordered, 
-      target: self, 
+      UIImage.imageNamed("magnify"),
+      style: UIBarButtonItemStyleBordered,
+      target: self,
       action: "showDetail:")
     self.navigationItem.leftBarButtonItem = listButton
 
@@ -91,7 +90,7 @@ class MapController < UIViewController
        style: UIBarButtonItemStyleBordered,
        target: self,
        action: "changeDate:")
-    
+
     if ARKit.deviceSupportsAR || Device.simulator?
       self.toolbarItems = [aboutButton, arButton, flexibleSpace, @activityViewButton, @dateButton]
     else
@@ -114,7 +113,7 @@ class MapController < UIViewController
   end
 
   def viewWillAppear(animated)
-    
+
     #Check to see if we've loaded the view into Winston-Salem yet
     if @didInitialZoom == false
 
@@ -127,7 +126,7 @@ class MapController < UIViewController
     else
       puts "Initial zoom already done."
     end
-  end    
+  end
 
   #This method loads the data from my server and sets the data into the map annotations
   def loadData
@@ -139,13 +138,13 @@ class MapController < UIViewController
     dateFormat.setDateFormat("yyyy-MM-dd")
     dateString = dateFormat.stringFromDate(@theDate)
 
-    BubbleWrap::HTTP.get(APIURL + dateString) do |response|
-        if response.ok?
+    CrimeAPI.dataForDate(dateString) do |json, error|
+      ap "got results"
 
-          json = BubbleWrap::JSON.parse(response.body.to_str)
+      if error == nil
 
+          removeAllAnnotations
           if json.count > 0
-            removeAllAnnotations
 
             annotations = []
             json.each do |crimeData|
@@ -153,23 +152,24 @@ class MapController < UIViewController
             end
 
             self.view.addAnnotations(annotations)
-
             dateAndZoom
 
           else
+
             App.alert("No Results Found for that day.")
             @activityView.stopAnimating
             @dateButton.title = "No Results"
-            removeAllAnnotations
+
           end
+      else
 
-        else
-          App.alert("Whoops! There was an error downloading data from the server. Please check your internet connection or try again later.")
-          @activityView.stopAnimating
-          @dateButton.title = "Server Error"
-        end
-    end
+        App.alert("Whoops! There was an error downloading data from the server. Please check your internet connection or try again later.")
+        @dateButton.title = "Server Error"
+        @activityView.stopAnimating
 
+      end
+
+    end # CrimeAPI block
   end
 
   def removeAllAnnotations
@@ -222,9 +222,7 @@ class MapController < UIViewController
   def rezoom(sender)
 
     #Don't attempt the rezoom of there are no pins
-    if annotations.length == 0
-      return
-    end
+    return if annotations.length == 0
 
     #Set some boundaries
     topLeftCoord = CLLocationCoordinate2DMake(-90, 180)
@@ -235,18 +233,19 @@ class MapController < UIViewController
       topLeftCoord.longitude = [topLeftCoord.longitude, crime.coordinate.longitude].min
       topLeftCoord.latitude = [topLeftCoord.latitude, crime.coordinate.latitude].max
       bottomRightCoord.longitude = [bottomRightCoord.longitude, crime.coordinate.longitude].max
-      bottomRightCoord.latitude = [bottomRightCoord.latitude, crime.coordinate.latitude].min 
+      bottomRightCoord.latitude = [bottomRightCoord.latitude, crime.coordinate.latitude].min
     end
 
-    #Find the bounds of all the pins and set the mapView 
+    #Find the bounds of all the pins and set the mapView
     coord = CLLocationCoordinate2DMake(
-      topLeftCoord.latitude - (topLeftCoord.latitude - bottomRightCoord.latitude) * 0.5, 
+      topLeftCoord.latitude - (topLeftCoord.latitude - bottomRightCoord.latitude) * 0.5,
       topLeftCoord.longitude + (bottomRightCoord.longitude - topLeftCoord.longitude) * 0.5)
     span = MKCoordinateSpanMake(
-      ((topLeftCoord.latitude - bottomRightCoord.latitude) * 1.075).abs, 
+      ((topLeftCoord.latitude - bottomRightCoord.latitude) * 1.075).abs,
       ((bottomRightCoord.longitude - topLeftCoord.longitude) * 1.075).abs)
     region = MKCoordinateRegionMake(coord, span)
     fits = self.view.regionThatFits(region);
+
     self.view.setRegion(fits, animated:true)
   end
 
@@ -255,8 +254,7 @@ class MapController < UIViewController
 
     App::Persistence['seenAbout'] = "yes"
 
-    aboutViewController = AboutController.alloc.init
-    aboutNavController = PortraitNavigationController.alloc.initWithRootViewController(aboutViewController)
+    aboutNavController = PortraitNavigationController.alloc.initWithRootViewController AboutController.new
     aboutNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
 
     self.navigationController.presentModalViewController(aboutNavController, animated:true)
@@ -276,12 +274,11 @@ class MapController < UIViewController
     detailNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
 
     self.navigationController.presentModalViewController(detailNavController, animated:true)
-
   end
 
   def closeDetailAndZoomToEvent(marker)
     self.navigationController.dismissModalViewControllerAnimated(true)
-    
+
     # Close all the annotations just in case
     unless self.view.selectedAnnotations.nil?
       self.view.selectedAnnotations.each do |annotation|
@@ -290,13 +287,13 @@ class MapController < UIViewController
     end
 
     EM.add_timer 0.75 do
-      zoomToAndSelectMarker( marker )
+      zoomToAndSelectMarker marker
     end
 
   end
 
   def zoomToAndSelectMarker(marker)
-    region = MKCoordinateRegionMake( marker.coordinate, MKCoordinateSpanMake( 0.1, 0.1 ) )
+    region = MKCoordinateRegionMake( marker.coordinate, MKCoordinateSpanMake( 0.05, 0.05 ) )
     self.view.setRegion(region, animated:true)
     self.view.selectAnnotation(marker, animated:true)
   end
@@ -306,7 +303,6 @@ class MapController < UIViewController
     puts "Changing the date"
 
     #Show the calendar.
-    p @calendarHolder
     if @calendarHolder != nil
       destroyCalendar
       return
@@ -327,13 +323,13 @@ class MapController < UIViewController
       (screenBounds.size.height  - calendarHeight) / 2,
       calendarWidth,
       calendarHeight)
-      
+
     @calendarView.autoresizingMask = (
       UIViewAutoresizingFlexibleTopMargin |
       UIViewAutoresizingFlexibleBottomMargin |
       UIViewAutoresizingFlexibleLeftMargin |
       UIViewAutoresizingFlexibleRightMargin)
-    
+
     @calendarView.frame = calendarBounds;
     @calendarView.setCenter(self.view.center)
 
@@ -367,7 +363,7 @@ class MapController < UIViewController
         App.alert("Please select a date\nin the past.")
         return;
       end
-          
+
       @theDate = date
       loadData
     end
@@ -380,7 +376,7 @@ class MapController < UIViewController
     UIView.animateWithDuration(AnimationTime,
       delay:0,
       options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationCurveEaseOut | UIViewAnimationOptionBeginFromCurrentState,
-      animations: -> do  
+      animations: -> do
           @calendarHolder.alpha = 0
           @calendarView.alpha = 0
       end,
@@ -421,7 +417,7 @@ class MapController < UIViewController
   end
 
   def geoLocations
-    
+
     locationArray = []
 
      annotations.each do |thisAnnotation|
