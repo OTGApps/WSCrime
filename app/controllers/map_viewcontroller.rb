@@ -162,19 +162,13 @@ class MapController < UIViewController
     @dateButton.title = @theDate.to_s
     @activityView.stopAnimating
 
-    #Get the first crime so we can make sure @theDate is set correctly for our data
+    # Sometimes the API returns back data for a date that isn't the date we selected.
+    # Get the first crime so we can make sure @theDate is set correctly for our data
     firstAnnotation = annotations[0]
+    dateParts = firstAnnotation.date.split("-")
 
-    dateFormat = NSDateFormatter.alloc.init
-    dateFormat.setDateFormat("yyyy-MM-dd")
-
-    @theDate = dateFormat.dateFromString(firstAnnotation.date)
-    newDate = NSDate.dateWithTimeInterval(0, sinceDate:@theDate)
-
-    dateFormat.setDateFormat("MMM dd, yyyy")
-    theNewDate = dateFormat.stringFromDate(@theDate)
-
-    @dateButton.title = theNewDate
+    @theDate = Time.mktime(dateParts[0], dateParts[1], dateParts[2])
+    @dateButton.title = @theDate.strftime("%b %e, %Y")
 
     #Only change the map zoom if this is the first data load.
     if @didInitialPinZoom == false
