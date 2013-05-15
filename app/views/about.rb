@@ -1,8 +1,6 @@
 class AboutController < UIViewController
 
   def viewDidLoad
-    super
-
     self.title = "About"
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack
 
@@ -34,7 +32,6 @@ class AboutController < UIViewController
     end
 
     self.view.loadHTMLString(aboutContent, baseURL:baseURL)
-
   end
 
   #debugging function to output the html of the webview once loaded.
