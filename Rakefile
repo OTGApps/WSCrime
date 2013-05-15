@@ -16,16 +16,12 @@ Motion::Project::App.setup do |app|
   app.deployment_target = "5.1"
   app.info_plist['APP_STORE_ID'] = 472546582
 
-  #Add Flurry Analytics as a static library.
-  app.vendor_project('vendor/Flurry', :static,
-    :products => ['libFlurry.a'],
-    :headers_dir => 'vendor/Flurry')
-  
   #app.vendor_project('vendor/ARKit/ARKit', :static)
   app.vendor_project('vendor/ARKit', :xcode,
     :headers_dir => 'ARKitLib/ARKit')
 
   app.pods do
+    pod 'FlurrySDK' # Analytics
     pod 'CKCalendar'
     pod 'Appirater'
   end
