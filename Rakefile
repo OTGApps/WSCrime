@@ -19,9 +19,10 @@ Motion::Project::App.setup do |app|
   #app.vendor_project('vendor/ARKit/ARKit', :static)
   app.vendor_project('vendor/ARKit', :xcode,
     :headers_dir => 'ARKitLib/ARKit')
+  app.vendor_project('vendor/TimesSquare', :static, :cflags => '-fobjc-arc')
 
   app.pods do
-    pod 'FlurrySDK' # Analytics
+    pod 'FlurrySDK'
     pod 'CKCalendar'
     pod 'Appirater'
   end

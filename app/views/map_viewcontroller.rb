@@ -4,7 +4,7 @@ class MapController < UIViewController
 
   #Constants
   MetersPerMile = 1609.344
-  AnimationTime = 0.25
+  #AnimationTime = 0.25
 
   def viewDidLoad
 
@@ -94,7 +94,6 @@ class MapController < UIViewController
 
     #Check to see if we've loaded the view into Winston-Salem yet
     if @didInitialZoom == false
-
       #Center on Winston-Salem.
       initialLocation = CLLocationCoordinate2D.new(36.10, -80.26)
       region = MKCoordinateRegionMakeWithDistance(initialLocation, 4 * MetersPerMile, 4 * MetersPerMile)
@@ -117,7 +116,6 @@ class MapController < UIViewController
     dateString = dateFormat.stringFromDate(@theDate)
 
     CrimeAPI.dataForDate(dateString) do |json, error|
-      ap "got results"
 
       if error == nil
 
@@ -272,98 +270,56 @@ class MapController < UIViewController
 
   #Present the calendar view to change the date.
   def changeDate(sender)
-    puts "Changing the date"
 
-    #Show the calendar.
-    if @calendarHolder != nil
-      destroyCalendar
-      return
-    end
+    @calendarComponent ||= TSQCalendarView.alloc.initWithFrame(CGRectZero)
+    @calendarComponent.rowCellClass = TSQTACalendarRowCell
+    @calendarComponent.firstDate = Time.local(2007,11, 10)
+    @calendarComponent.lastDate = Time.now
+    @calendarComponent.selectedDate = @theDate
+    @calendarComponent.delegate = self
+    @calendarComponent.backgroundColor = UIColor.whiteColor
 
-    @calendarHolder = UIView.alloc.initWithFrame(self.view.frame)
-    @calendarView = CKCalendarView.alloc.initWithStartDay(1)
-    @calendarView.delegate = self
-    @calendarView.selectedDate = @theDate
+    calendarVC = UIViewController.alloc.init
+    calendarVC.title = "Select a Date:"
 
-    #Position the calendar view
-    screenBounds = self.view.bounds
-    calendarWidth = 300
-    calendarHeight = 300
+    backButton = UIBarButtonItem.alloc.initWithTitle(
+      "Done",
+      style: UIBarButtonItemStyleDone,
+      target: self,
+      action: "closeCalendarModal")
 
-    calendarBounds = CGRectMake(
-      (screenBounds.size.width  - calendarWidth) / 2,
-      (screenBounds.size.height  - calendarHeight) / 2,
-      calendarWidth,
-      calendarHeight)
+    calendarVC.view = @calendarComponent
 
-    @calendarView.autoresizingMask = (
-      UIViewAutoresizingFlexibleTopMargin |
-      UIViewAutoresizingFlexibleBottomMargin |
-      UIViewAutoresizingFlexibleLeftMargin |
-      UIViewAutoresizingFlexibleRightMargin)
+    dateNavController = PortraitNavigationController.alloc.initWithRootViewController calendarVC
+    dateNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
 
-    @calendarView.frame = calendarBounds;
-    @calendarView.setCenter(self.view.center)
+    calendarVC.navigationItem.rightBarButtonItem = backButton
+    calendarVC.navigationController.navigationBar.barStyle = UIBarStyleBlack
 
-    @calendarHolder.addSubview(@calendarView)
-
-    @calendarHolder.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight
-    @calendarHolder.alpha = 0
-    @calendarView.alpha = 0
-    @calendarHolder.backgroundColor = UIColor.colorWithWhite(0, alpha:0.5)
-
-    self.view.addSubview(@calendarHolder)
-
-    UIView.animateWithDuration(AnimationTime,
-        delay:0,
-        options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationCurveEaseOut | UIViewAnimationOptionBeginFromCurrentState,
-        animations: -> do
-          @calendarHolder.alpha = 1;
-          @calendarView.alpha = 1;
-        end,
-        completion: ->(finished) do
-        end)
+    #calendarVC.view.scrollToDate(NSDate.date, animated:false)
+    self.navigationController.presentModalViewController(dateNavController, animated:true)
   end
 
-  #CKCalendarView delegate method for when a date is tapped
-  def calendar(calendar, didSelectDate:date)
-    #p "Selecting date: " + date.to_s
-
+  def calendarView(calendarView, didSelectDate:date)
     if @theDate.isEqualToDate(date) == false
 
       if date.laterDate(Time.now) == date
         App.alert("Please select a date\nin the past.")
-        return;
+        return
       end
 
       @theDate = date
-      loadData
     end
-
-    destroyCalendar
   end
 
-  #Goodbye, calendar!
-  def destroyCalendar
-    UIView.animateWithDuration(AnimationTime,
-      delay:0,
-      options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationCurveEaseOut | UIViewAnimationOptionBeginFromCurrentState,
-      animations: -> do
-          @calendarHolder.alpha = 0
-          @calendarView.alpha = 0
-      end,
-      completion: ->(finished) do
-          @calendarHolder.removeFromSuperview
-          @calendarView.delegate = nil
-          @calendarView = nil
-          @calendarHolder = nil
-      end)
+  def closeCalendarModal
+    self.navigationController.dismissModalViewControllerAnimated(true)
+    loadData
   end
 
   def annotations
     self.view.annotations || []
   end
-
 
   # Augmented Reality
 
