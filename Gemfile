@@ -12,4 +12,4 @@ gem 'ProMotion', :path => "../ProMotion/"
 gem "rake", '>= 0.9.4'
 
 # Development
-gem 'awesome_print_motion'
+#gem 'awesome_print_motion'

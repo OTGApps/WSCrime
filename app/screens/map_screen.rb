@@ -100,7 +100,7 @@ class MapScreen < UIViewController
 
       @didInitialZoom = true
     else
-      puts "Initial zoom already done."
+#      puts "Initial zoom already done."
     end
   end
 
@@ -154,7 +154,7 @@ class MapScreen < UIViewController
   end
 
   def dateAndZoom
-    p "Checking the date of the annotations and zooming appropriately."
+#    p "the date of the annotations and zooming appropriately."
 
     @dateButton.title = @theDate.to_s
     @activityView.stopAnimating
@@ -339,7 +339,7 @@ class MapScreen < UIViewController
   end
 
   def locationClicked(coordinate)
-    puts coordinate
+#    puts coordinate
   end
 
 end #MapController
