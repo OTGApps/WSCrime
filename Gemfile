@@ -6,7 +6,7 @@ gem "cocoapods"
 
 # RubyMotion
 gem 'bubble-wrap', :require => ['bubble-wrap/core', 'bubble-wrap/http', 'bubble-wrap/reactor']
-gem 'ProMotion', :path => "../ProMotion/"
+gem 'ProMotion'
 
 # Rubygems
 gem "rake", '>= 0.9.4'
