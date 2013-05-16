@@ -1,10 +1,9 @@
-class MapController < UIViewController
+class MapScreen < UIViewController
 
   include BW::Reactor
 
   #Constants
   MetersPerMile = 1609.344
-  #AnimationTime = 0.25
 
   def viewDidLoad
 
@@ -18,7 +17,7 @@ class MapController < UIViewController
     @didInitialPinZoom = false
     @theDate = NSDate.date
 
-  	#Set the application title
+    #Set the application title
     self.setTitle("Crime Map", subtitle:"Winston-Salem, NC")
 
     #Setup the toolbar and navigationbar
@@ -35,7 +34,7 @@ class MapController < UIViewController
     self.navigationItem.rightBarButtonItem = reZoomButton
 
     listButton = UIBarButtonItem.alloc.initWithImage(
-      UIImage.imageNamed("magnify"),
+      UIImage.imageNamed("list"),
       style: UIBarButtonItemStyleBordered,
       target: self,
       action: "showDetail:")
@@ -53,15 +52,15 @@ class MapController < UIViewController
       target: self,
       action: "loadARWindow:")
 
-  	flexibleSpace = UIBarButtonItem.alloc.initWithBarButtonSystemItem(
-  		UIBarButtonSystemItemFlexibleSpace,
-  		target:nil,
-  		action:nil)
+    flexibleSpace = UIBarButtonItem.alloc.initWithBarButtonSystemItem(
+      UIBarButtonSystemItemFlexibleSpace,
+      target:nil,
+      action:nil)
 
-  	@activityView = UIActivityIndicatorView.alloc.initWithActivityIndicatorStyle(UIActivityIndicatorViewStyleWhite)
-  	@activityView.hidesWhenStopped = true
-  	@activityView.startAnimating()
-  	@activityViewButton = UIBarButtonItem.alloc.initWithCustomView(@activityView)
+    @activityView = UIActivityIndicatorView.alloc.initWithActivityIndicatorStyle(UIActivityIndicatorViewStyleWhite)
+    @activityView.hidesWhenStopped = true
+    @activityView.startAnimating()
+    @activityViewButton = UIBarButtonItem.alloc.initWithCustomView(@activityView)
 
     @dateButton = UIBarButtonItem.alloc.initWithTitle(
       "Loading data...",
@@ -224,7 +223,7 @@ class MapController < UIViewController
 
     App::Persistence['seenAbout'] = "yes"
 
-    aboutNavController = PortraitNavigationController.alloc.initWithRootViewController AboutController.new
+    aboutNavController = PortraitNavigationController.alloc.initWithRootViewController AboutScreen.new
     aboutNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
 
     self.navigationController.presentModalViewController(aboutNavController, animated:true)
@@ -237,8 +236,7 @@ class MapController < UIViewController
         return
     end
 
-    detailViewController = DetailController.alloc.initWithData( annotations.mutableCopy, date:@dateButton.title )
-    detailViewController.parentVC = self
+    detailViewController = DetailScreen.new(:data => annotations.mutableCopy, :date => @dateButton.title, :parentVC => self )
     detailNavController = PortraitNavigationController.alloc.initWithRootViewController(detailViewController)
     detailNavController.setModalTransitionStyle(UIModalTransitionStyleFlipHorizontal)
     detailNavController.setModalPresentationStyle(UIModalPresentationFormSheet)

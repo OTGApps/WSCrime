@@ -2,14 +2,13 @@ class AppDelegate
 
   def application(application, didFinishLaunchingWithOptions:launchOptions)
     @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    @window.rootViewController = PortraitNavigationController.alloc.initWithRootViewController(MapController.alloc.init)
+    @window.rootViewController = PortraitNavigationController.alloc.initWithRootViewController(MapScreen.new)
     @window.rootViewController.wantsFullScreenLayout = true
     @window.makeKeyAndVisible
 
-    NSSetUncaughtExceptionHandler("uncaughtExceptionHandler")
-    Flurry.startSession("VNHHFKB2GK8BT22TPQRK")
-    if Device.simulator?
-      Flurry.setUserID('simulator')
+    unless Device.simulator?
+      NSSetUncaughtExceptionHandler("uncaughtExceptionHandler")
+      Flurry.startSession("VNHHFKB2GK8BT22TPQRK")
     end
 
     Appirater.setAppId NSBundle.mainBundle.objectForInfoDictionaryKey('APP_STORE_ID')
