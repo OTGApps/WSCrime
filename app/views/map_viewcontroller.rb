@@ -279,24 +279,12 @@ class MapController < UIViewController
     @calendarComponent.delegate = self
     @calendarComponent.backgroundColor = UIColor.whiteColor
 
-    calendarVC = UIViewController.alloc.init
-    calendarVC.title = "Select a Date:"
-
-    backButton = UIBarButtonItem.alloc.initWithTitle(
-      "Done",
-      style: UIBarButtonItemStyleDone,
-      target: self,
-      action: "closeCalendarModal")
-
+    calendarVC = CalendarScreen.new
     calendarVC.view = @calendarComponent
 
     dateNavController = PortraitNavigationController.alloc.initWithRootViewController calendarVC
     dateNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
 
-    calendarVC.navigationItem.rightBarButtonItem = backButton
-    calendarVC.navigationController.navigationBar.barStyle = UIBarStyleBlack
-
-    #calendarVC.view.scrollToDate(NSDate.date, animated:false)
     self.navigationController.presentModalViewController(dateNavController, animated:true)
   end
 
@@ -309,12 +297,9 @@ class MapController < UIViewController
       end
 
       @theDate = date
+      loadData
+      self.navigationController.dismissModalViewControllerAnimated(true)
     end
-  end
-
-  def closeCalendarModal
-    self.navigationController.dismissModalViewControllerAnimated(true)
-    loadData
   end
 
   def annotations
