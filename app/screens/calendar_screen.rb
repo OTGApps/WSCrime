@@ -3,7 +3,7 @@ class CalendarScreen < ProMotion::Screen
 
   def will_appear
   	@view_setup ||= begin
-			set_nav_bar_right_button "Done", action: :close_modal, type: UIBarButtonItemStyleDone
+			set_nav_bar_right_button "Cancel", action: :close_modal, type: UIBarButtonItemStyleDone
 	    self.navigationController.navigationBar.barStyle = UIBarStyleBlack
     	view.scrollToDate(NSDate.date, animated:false)
   	end
