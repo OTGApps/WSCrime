@@ -110,13 +110,13 @@ class MapScreen < UIViewController
     @activityView.startAnimating
 
     #Find the date to use
-    dateFormat = NSDateFormatter.alloc.init
+    dateFormat = NSDateFormatter.new
     dateFormat.setDateFormat("yyyy-MM-dd")
     dateString = dateFormat.stringFromDate(@theDate)
 
     CrimeAPI.dataForDate(dateString) do |json, error|
 
-      if error == nil
+      if error.nil?
 
           removeAllAnnotations
           if json.count > 0
