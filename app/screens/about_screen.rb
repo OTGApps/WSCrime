@@ -16,7 +16,7 @@ class AboutScreen < PM::Screen
 
       #Convert images over to retina if the images exist.
       if Device.retina?
-        aboutContent.gsub!(/src=['"](.*)\.(jpg|gif|png)['"]/) do |img|
+        aboutContent.gsub!(/src=['"](.*?)\.(jpg|gif|png)['"]/) do |img|
           if File.exists?(App.resources_path + "/#{$1}@2x.#{$2}")
             uiImage = UIImage.imageNamed("/#{$1}@2x.#{$2}")
 
@@ -45,7 +45,7 @@ class AboutScreen < PM::Screen
   def webView(inWeb, shouldStartLoadWithRequest:inRequest, navigationType:inType)
     if inType == UIWebViewNavigationTypeLinkClicked
       UIApplication.sharedApplication.openURL(inRequest.URL)
-      false #don't allow the web view to load the link.
+      return false #don't allow the web view to load the link.
     end
     true #return true for local file loading.
   end
