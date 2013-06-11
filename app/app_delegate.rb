@@ -1,11 +1,6 @@
-class AppDelegate
+class AppDelegate < ProMotion::Delegate
 
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    @window.rootViewController = PortraitNavigationController.alloc.initWithRootViewController(MapScreen.new)
-    @window.rootViewController.wantsFullScreenLayout = true
-    @window.makeKeyAndVisible
-
+  def on_load(app, options)
     unless Device.simulator?
       NSSetUncaughtExceptionHandler("uncaughtExceptionHandler")
       Flurry.startSession("VNHHFKB2GK8BT22TPQRK")
@@ -16,6 +11,8 @@ class AppDelegate
     Appirater.setUsesUntilPrompt 10
     Appirater.setTimeBeforeReminding 5
     Appirater.appLaunched true
+
+    open MapScreen.new(nav_bar: true)
 
     true
   end

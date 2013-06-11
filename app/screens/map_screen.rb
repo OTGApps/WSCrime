@@ -1,14 +1,16 @@
-class MapScreen < UIViewController
+class MapScreen < ProMotion::Screen
 
   include BW::Reactor
 
   #Constants
   MetersPerMile = 1609.344
 
-  def viewDidLoad
+  def on_load
 
-    mapView = MKMapView.alloc.initWithFrame(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height))
-    mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight
+    mapView = set_attributes MKMapView.new, {
+      frame: CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height),
+      resize: [ :width, :height ]
+    }
     self.view = mapView
     view.delegate = self
 
@@ -26,25 +28,23 @@ class MapScreen < UIViewController
     self.navigationController.toolbar.barStyle = UIBarStyleBlack;
 
     #Create buttons
-    reZoomButton = UIBarButtonItem.alloc.initWithImage(
-      UIImage.imageNamed("location"),
+    set_nav_bar_button :right, {
+      image: UIImage.imageNamed("location"),
       style: UIBarButtonItemStyleBordered,
-      target: self,
-      action: "rezoom:")
-    self.navigationItem.rightBarButtonItem = reZoomButton
+      action: :rezoom
+    }
 
-    listButton = UIBarButtonItem.alloc.initWithImage(
-      UIImage.imageNamed("list"),
+    set_nav_bar_button :left, {
+      image: UIImage.imageNamed("list"),
       style: UIBarButtonItemStyleBordered,
-      target: self,
-      action: "showDetail:")
-    self.navigationItem.leftBarButtonItem = listButton
+      action: :show_detail
+    }
 
     aboutButton = UIBarButtonItem.alloc.initWithTitle(
       "About",
       style: UIBarButtonItemStyleBordered,
       target: self,
-      action: "loadAboutWindow:")
+      action: "show_about")
 
     arButton = UIBarButtonItem.alloc.initWithImage(
       UIImage.imageNamed("radar"),
@@ -75,21 +75,19 @@ class MapScreen < UIViewController
     end
 
     #Send a request off to the server to get the data.
-    loadData
+    load_data
   end
 
-  def viewDidAppear(animated)
+  def on_appear
     # Show the about window if this is their first time loading the app.
-    seenAbout = App::Persistence['seenAbout']
-    unless seenAbout == "yes"
-      loadAboutWindow(nil)
+    unless App::Persistence['seenAbout'] == "yes"
+      show_about
     end
 
     self.navigationController.setToolbarHidden(false, animated:true)
-
   end
 
-  def viewWillAppear(animated)
+  def will_appear
 
     #Check to see if we've loaded the view into Winston-Salem yet
     if @didInitialZoom == false
@@ -105,7 +103,7 @@ class MapScreen < UIViewController
   end
 
   #This method loads the data from my server and sets the data into the map annotations
-  def loadData
+  def load_data
     @dateButton.title = "Loading data..."
     @activityView.startAnimating
 
@@ -154,8 +152,6 @@ class MapScreen < UIViewController
   end
 
   def dateAndZoom
-#    p "the date of the annotations and zooming appropriately."
-
     @dateButton.title = @theDate.to_s
     @activityView.stopAnimating
 
@@ -219,29 +215,21 @@ class MapScreen < UIViewController
   end
 
   #Present the about window in a modal view.
-  def loadAboutWindow(sender)
-
-    App::Persistence['seenAbout'] = "yes"
-
-    aboutNavController = PortraitNavigationController.alloc.initWithRootViewController AboutScreen.new
-    aboutNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
-
-    self.navigationController.presentModalViewController(aboutNavController, animated:true)
+  def show_about
+    App::Persistence["seenAbout"] = "yes"
+    open_modal AboutScreen.new(nav_bar: true)
   end
 
-  def showDetail(sender)
-
+  def show_detail
     if annotations.length == 0
         App.alert("There are no incidents to view.")
         return
     end
 
-    detailViewController = DetailScreen.new(:data => annotations.mutableCopy, :date => @dateButton.title, :parentVC => self )
-    detailNavController = PortraitNavigationController.alloc.initWithRootViewController(detailViewController)
-    detailNavController.setModalTransitionStyle(UIModalTransitionStyleFlipHorizontal)
-    detailNavController.setModalPresentationStyle(UIModalPresentationFormSheet)
-
-    self.navigationController.presentModalViewController(detailNavController, animated:true)
+    open_modal DetailScreen.new(:data => annotations.mutableCopy, :date => @dateButton.title, :parentVC => self ),
+      nav_bar: true,
+      transition_style: UIModalTransitionStyleFlipHorizontal,
+      presentation_style: UIModalPresentationFormSheet
   end
 
   def closeDetailAndZoomToEvent(marker)
@@ -295,7 +283,7 @@ class MapScreen < UIViewController
       end
 
       @theDate = date
-      loadData
+      load_data
       self.navigationController.dismissModalViewControllerAnimated(true)
     end
   end
