@@ -226,8 +226,7 @@ class MapScreen < ProMotion::Screen
         return
     end
 
-    open_modal DetailScreen.new(:data => annotations.mutableCopy, :date => @dateButton.title, :parentVC => self ),
-      nav_bar: true,
+    open_modal DetailScreen.new(:nav_bar => true, :data => annotations.mutableCopy, :date => @dateButton.title, :parentVC => self ),
       transition_style: UIModalTransitionStyleFlipHorizontal,
       presentation_style: UIModalPresentationFormSheet
   end
