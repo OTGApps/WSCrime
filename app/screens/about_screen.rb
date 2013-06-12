@@ -3,6 +3,9 @@ class AboutScreen < PM::Screen
   title "About"
 
   def will_appear
+
+    App::Persistence["seenAbout"] = "yes"
+
     @view_loaded ||= begin
       self.navigationController.navigationBar.barStyle = UIBarStyleBlack
 

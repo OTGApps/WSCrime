@@ -1,22 +1,12 @@
-class MapScreen < ProMotion::Screen
+class MapScreen < PM::MapScreen
 
   include BW::Reactor
 
-  #Constants
-  MetersPerMile = 1609.344
+  start_position latitude: 36.10, longitude: -80.26, radius: 4
 
   def on_load
 
-    mapView = set_attributes MKMapView.new, {
-      frame: CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height),
-      resize: [ :width, :height ]
-    }
-    self.view = mapView
-    view.delegate = self
-
     #Init instance values
-    @didInitialZoom = false
-    @didInitialPinZoom = false
     @theDate = NSDate.date
 
     #Set the application title
@@ -80,26 +70,8 @@ class MapScreen < ProMotion::Screen
 
   def on_appear
     # Show the about window if this is their first time loading the app.
-    unless App::Persistence['seenAbout'] == "yes"
-      show_about
-    end
-
+    show_about unless App::Persistence['seenAbout'] == "yes"
     self.navigationController.setToolbarHidden(false, animated:true)
-  end
-
-  def will_appear
-
-    #Check to see if we've loaded the view into Winston-Salem yet
-    if @didInitialZoom == false
-      #Center on Winston-Salem.
-      initialLocation = CLLocationCoordinate2D.new(36.10, -80.26)
-      region = MKCoordinateRegionMakeWithDistance(initialLocation, 4 * MetersPerMile, 4 * MetersPerMile)
-      self.view.setRegion(region, animated:true)
-
-      @didInitialZoom = true
-    else
-#      puts "Initial zoom already done."
-    end
   end
 
   #This method loads the data from my server and sets the data into the map annotations
@@ -116,15 +88,20 @@ class MapScreen < ProMotion::Screen
 
       if error.nil?
 
-          removeAllAnnotations
+          clear_annotations
           if json.count > 0
 
-            annotations = []
-            json.each do |crimeData|
-                annotations << CrimeAnnotation.new(crimeData)
+            json.each do |cd|
+              add_annotation({
+                latitude: cd['latitude'],
+                longitude: cd['longitude'],
+                title: cd['location'],
+                subtitle: "#{cd['date_time']} : #{cd['offense_charge']}",
+                pin_color: cd['type'] == "Arrest" ? MKPinAnnotationColorRed : MKPinAnnotationColorPurple,
+                sort_by: cd['timestamp'],
+                date: cd['date_day']
+              })
             end
-
-            self.view.addAnnotations(annotations)
             dateAndZoom
 
           else
@@ -145,78 +122,25 @@ class MapScreen < ProMotion::Screen
     end # CrimeAPI block
   end
 
-  def removeAllAnnotations
-    annotations.each do |thisAnnotation|
-      self.view.removeAnnotation(thisAnnotation)
-    end
-  end
-
   def dateAndZoom
     @dateButton.title = @theDate.to_s
     @activityView.stopAnimating
 
     # Sometimes the API returns back data for a date that isn't the date we selected.
     # Get the first crime so we can make sure @theDate is set correctly for our data
-    firstAnnotation = annotations[0]
-    dateParts = firstAnnotation.date.split("-")
+    dateParts = annotations.first.date.split("-")
 
     @theDate = Time.mktime(dateParts[0], dateParts[1], dateParts[2])
     @dateButton.title = @theDate.strftime("%b %e, %Y")
 
     #Only change the map zoom if this is the first data load.
-    if @didInitialPinZoom == false
-      rezoom(nil)
-      @didInitialPinZoom = true
+    @didInitialPinZoom ||= begin
+      zoom_to_fit_annotations
     end
-  end
-
-  ViewIdentifier = 'ViewIdentifier'
-  def mapView(mapView, viewForAnnotation:crime)
-    if view = mapView.dequeueReusableAnnotationViewWithIdentifier(ViewIdentifier)
-      view.annotation = crime
-    else
-      #Set the pin properties
-      view = MKPinAnnotationView.alloc.initWithAnnotation(crime, reuseIdentifier:ViewIdentifier)
-      view.canShowCallout = true
-      view.animatesDrop = false
-      view.pinColor = crime.pinColor
-    end
-    view
-  end
-
-  def rezoom(sender)
-
-    #Don't attempt the rezoom of there are no pins
-    return if annotations.length == 0
-
-    #Set some boundaries
-    topLeftCoord = CLLocationCoordinate2DMake(-90, 180)
-    bottomRightCoord = CLLocationCoordinate2DMake(90, -180)
-
-    #Find the bounds of the pins
-    annotations.each do |crime|
-      topLeftCoord.longitude = [topLeftCoord.longitude, crime.coordinate.longitude].min
-      topLeftCoord.latitude = [topLeftCoord.latitude, crime.coordinate.latitude].max
-      bottomRightCoord.longitude = [bottomRightCoord.longitude, crime.coordinate.longitude].max
-      bottomRightCoord.latitude = [bottomRightCoord.latitude, crime.coordinate.latitude].min
-    end
-
-    #Find the bounds of all the pins and set the mapView
-    coord = CLLocationCoordinate2DMake(
-      topLeftCoord.latitude - (topLeftCoord.latitude - bottomRightCoord.latitude) * 0.5,
-      topLeftCoord.longitude + (bottomRightCoord.longitude - topLeftCoord.longitude) * 0.5)
-    span = MKCoordinateSpanMake(
-      ((topLeftCoord.latitude - bottomRightCoord.latitude) * 1.075).abs,
-      ((bottomRightCoord.longitude - topLeftCoord.longitude) * 1.075).abs)
-    region = MKCoordinateRegionMake(coord, span)
-    fits = self.view.regionThatFits(region);
-
-    self.view.setRegion(fits, animated:true)
   end
 
   #Present the about window in a modal view.
   def show_about
-    App::Persistence["seenAbout"] = "yes"
     open_modal AboutScreen.new(nav_bar: true)
   end
 
@@ -285,10 +209,6 @@ class MapScreen < ProMotion::Screen
       load_data
       self.navigationController.dismissModalViewControllerAnimated(true)
     end
-  end
-
-  def annotations
-    self.view.annotations || []
   end
 
   # Augmented Reality
