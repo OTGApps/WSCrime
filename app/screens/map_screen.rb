@@ -99,7 +99,8 @@ class MapScreen < PM::MapScreen
                 subtitle: "#{cd['date_time']} : #{cd['offense_charge']}",
                 pin_color: cd['type'] == "Arrest" ? MKPinAnnotationColorRed : MKPinAnnotationColorPurple,
                 sort_by: cd['timestamp'],
-                date: cd['date_day']
+                date: cd['date_day'],
+                type: cd['type']
               })
             end
             dateAndZoom
