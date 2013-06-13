@@ -20,15 +20,22 @@ class UIViewController
         labelTitle = UILabel.alloc.initWithFrame CGRectZero
         labelSubtitle = UILabel.alloc.initWithFrame CGRectZero
 
+        if Device.ios_version.to_i < 7
+          labelTitle.shadowColor = UIColor.darkGrayColor
+          labelTitle.textColor = UIColor.whiteColor
+          labelSubtitle.textColor = UIColor.whiteColor
+          labelSubtitle.shadowColor = UIColor.darkGrayColor
+        else
+          labelTitle.shadowColor = UIColor.lightGrayColor
+          labelTitle.textColor = UIColor.blackColor
+          labelSubtitle.textColor = UIColor.blackColor
+          labelSubtitle.shadowColor = UIColor.lightGrayColor
+        end
         labelTitle.backgroundColor = UIColor.clearColor
-        labelTitle.textAlignment = UITextAlignmentCenter
-        labelTitle.shadowColor = UIColor.darkGrayColor
-        labelTitle.textColor = UIColor.whiteColor
-        labelTitle.lineBreakMode = UILineBreakModeTailTruncation
         labelSubtitle.backgroundColor = UIColor.clearColor
+        labelTitle.lineBreakMode = UILineBreakModeTailTruncation
+        labelTitle.textAlignment = UITextAlignmentCenter
         labelSubtitle.textAlignment = UITextAlignmentCenter
-        labelSubtitle.textColor = UIColor.whiteColor
-        labelSubtitle.shadowColor = UIColor.darkGrayColor
         labelSubtitle.lineBreakMode = UILineBreakModeTailTruncation
         labelTitle.font = UIFont.boldSystemFontOfSize 18
         labelSubtitle.font = UIFont.systemFontOfSize 14
