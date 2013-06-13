@@ -14,8 +14,7 @@ class MapScreen < PM::MapScreen
 
     #Setup the toolbar and navigationbar
     self.navigationController.setToolbarHidden(false)
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.toolbar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBar.barStyle = self.navigationController.toolbar.barStyle = UIBarStyleBlack if Device.ios_version.to_i < 7
 
     #Create buttons
     set_nav_bar_button :right, {
@@ -47,10 +46,10 @@ class MapScreen < PM::MapScreen
       target:nil,
       action:nil)
 
-    @activityView = UIActivityIndicatorView.alloc.initWithActivityIndicatorStyle(UIActivityIndicatorViewStyleWhite)
-    @activityView.hidesWhenStopped = true
-    @activityView.startAnimating()
-    @activityViewButton = UIBarButtonItem.alloc.initWithCustomView(@activityView)
+    @activity_view = UIActivityIndicatorView.alloc.initWithActivityIndicatorStyle(UIActivityIndicatorViewStyleWhite)
+    @activity_view.hidesWhenStopped = true
+    @activity_view.startAnimating()
+    @activity_view_button = UIBarButtonItem.alloc.initWithCustomView(@activity_view)
 
     @dateButton = UIBarButtonItem.alloc.initWithTitle(
       "Loading data...",
@@ -59,9 +58,9 @@ class MapScreen < PM::MapScreen
        action: "changeDate:")
 
     if ARKit.deviceSupportsAR || Device.simulator?
-      self.toolbarItems = [aboutButton, arButton, flexibleSpace, @activityViewButton, @dateButton]
+      self.toolbarItems = [aboutButton, arButton, flexibleSpace, @activity_view_button, @dateButton]
     else
-      self.toolbarItems = [aboutButton, flexibleSpace, @activityViewButton, @dateButton]
+      self.toolbarItems = [aboutButton, flexibleSpace, @activity_view_button, @dateButton]
     end
 
     #Send a request off to the server to get the data.
@@ -74,10 +73,14 @@ class MapScreen < PM::MapScreen
     self.navigationController.setToolbarHidden(false, animated:true)
   end
 
+  def annotation_data
+    @crimes ||= []
+  end
+
   #This method loads the data from my server and sets the data into the map annotations
   def load_data
     @dateButton.title = "Loading data..."
-    @activityView.startAnimating
+    @activity_view.startAnimating
 
     #Find the date to use
     dateFormat = NSDateFormatter.new
@@ -88,27 +91,29 @@ class MapScreen < PM::MapScreen
 
       if error.nil?
 
-          clear_annotations
+          @crimes = []
           if json.count > 0
 
             json.each do |cd|
-              add_annotation({
+              @crimes << {
                 latitude: cd['latitude'],
                 longitude: cd['longitude'],
                 title: cd['location'],
-                subtitle: "#{cd['date_time']} : #{cd['offense_charge']}",
+                subtitle: "#{cd['date_time']}: #{cd['offense_charge']}",
                 pin_color: cd['type'] == "Arrest" ? MKPinAnnotationColorRed : MKPinAnnotationColorPurple,
                 sort_by: cd['timestamp'],
                 date: cd['date_day'],
                 type: cd['type']
-              })
+              }
             end
+
+            update_annotation_data
             dateAndZoom
 
           else
 
             App.alert("No Results Found for that day.")
-            @activityView.stopAnimating
+            @activity_view.stopAnimating
             @dateButton.title = "No Results"
 
           end
@@ -116,7 +121,7 @@ class MapScreen < PM::MapScreen
 
         App.alert("Whoops! There was an error downloading data from the server. Please check your internet connection or try again later.")
         @dateButton.title = "Server Error"
-        @activityView.stopAnimating
+        @activity_view.stopAnimating
 
       end
 
@@ -125,7 +130,7 @@ class MapScreen < PM::MapScreen
 
   def dateAndZoom
     @dateButton.title = @theDate.to_s
-    @activityView.stopAnimating
+    @activity_view.stopAnimating
 
     # Sometimes the API returns back data for a date that isn't the date we selected.
     # Get the first crime so we can make sure @theDate is set correctly for our data
@@ -160,22 +165,17 @@ class MapScreen < PM::MapScreen
     self.navigationController.dismissModalViewControllerAnimated(true)
 
     # Close all the annotations just in case
-    unless self.view.selectedAnnotations.nil?
-      self.view.selectedAnnotations.each do |annotation|
-        self.view.deselectAnnotation(annotation, animated:false)
-      end
-    end
+    deselect_annotations
 
     EM.add_timer 0.75 do
-      zoomToAndSelectMarker marker
+      zoom_to_marker marker
     end
 
   end
 
-  def zoomToAndSelectMarker(marker)
-    region = MKCoordinateRegionMake( marker.coordinate, MKCoordinateSpanMake( 0.05, 0.05 ) )
-    self.view.setRegion(region, animated:true)
-    self.view.selectAnnotation(marker, animated:true)
+  def zoom_to_marker(marker)
+    set_region region(coordinate: marker.coordinate, span: [0.05, 0.05])
+    select_annotation marker
   end
 
   #Present the calendar view to change the date.
