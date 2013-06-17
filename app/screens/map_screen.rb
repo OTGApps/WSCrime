@@ -147,7 +147,7 @@ class MapScreen < PM::MapScreen
 
   #Present the about window in a modal view.
   def show_about
-    open_modal AboutScreen.new(nav_bar: true)
+    open_modal AboutScreen.new(nav_bar: true, external_links: true)
   end
 
   def show_detail

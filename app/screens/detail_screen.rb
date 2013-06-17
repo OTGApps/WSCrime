@@ -44,9 +44,9 @@ class DetailScreen < PM::TableScreen
     c = []
     @data.each_with_index do |cell,i|
       c << {
-        title: cell.annotation_params[:title],
+        title: cell.title,
         cell_style: UITableViewCellStyleSubtitle,
-        subtitle: cell.annotation_params[:subtitle],
+        subtitle: cell.subtitle,
         selection_style: UITableViewCellSelectionStyleBlue,
         accessory_type: UITableViewCellAccessoryDetailDisclosureButton,
         accessory_action: :tapped_crime,
