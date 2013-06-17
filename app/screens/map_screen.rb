@@ -1,5 +1,4 @@
 class MapScreen < PM::MapScreen
-
   include BW::Reactor
 
   start_position latitude: 36.10, longitude: -80.26, radius: 4
@@ -20,7 +19,7 @@ class MapScreen < PM::MapScreen
     set_nav_bar_button :right, {
       image: UIImage.imageNamed("location"),
       style: UIBarButtonItemStyleBordered,
-      action: :rezoom
+      action: :zoom_to_fit_annotations
     }
 
     set_nav_bar_button :left, {
