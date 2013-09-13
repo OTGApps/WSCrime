@@ -9,4 +9,8 @@ class CalendarScreen < ProMotion::Screen
   	end
   end
 
+  def close
+  	self.navigationController.dismissModalViewControllerAnimated(true)
+  end
+
 end

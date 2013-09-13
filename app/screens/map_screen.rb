@@ -2,6 +2,7 @@ class MapScreen < PM::MapScreen
   include BW::Reactor
 
   start_position latitude: 36.10, longitude: -80.26, radius: 4
+  title "Map"
 
   def on_load
 
@@ -102,7 +103,8 @@ class MapScreen < PM::MapScreen
                 pin_color: cd['type'] == "Arrest" ? MKPinAnnotationColorRed : MKPinAnnotationColorPurple,
                 sort_by: cd['timestamp'],
                 date: cd['date_day'],
-                type: cd['type']
+                type: cd['type'],
+                offense: cd['offense_charge']
               }
             end
 
@@ -144,7 +146,10 @@ class MapScreen < PM::MapScreen
 
   #Present the about window in a modal view.
   def show_about
-    open_modal AboutScreen.new(nav_bar: true, external_links: true)
+    open_modal AboutScreen.new(external_links: true),
+      nav_bar: true,
+      transition_style: UIModalTransitionStyleFlipHorizontal,
+      presentation_style: UIModalPresentationFormSheet
   end
 
   def show_detail
@@ -153,7 +158,8 @@ class MapScreen < PM::MapScreen
         return
     end
 
-    open_modal DetailScreen.new(:nav_bar => true, :data => annotations.mutableCopy, :date => @dateButton.title, :container => self ),
+    open_modal DetailScreen.new(:data => annotations.mutableCopy, :date => @dateButton.title, :container => self),
+      nav_bar: true,
       transition_style: UIModalTransitionStyleFlipHorizontal,
       presentation_style: UIModalPresentationFormSheet
   end

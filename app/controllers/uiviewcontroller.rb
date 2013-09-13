@@ -54,8 +54,6 @@ class UIViewController
     labelTitle.sizeToFit
     labelSubtitle.sizeToFit
 
-    ap self.interfaceOrientation
-
     if [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown].include? self.interfaceOrientation
       titleView.frame = CGRectMake(0, 0, [labelTitle.bounds.size.width, labelSubtitle.bounds.size.width].max, self.navigationController.navigationBar.bounds.size.height)
       labelTitle.center = CGPointMake(titleView.bounds.size.width / 2, 15)

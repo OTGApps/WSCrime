@@ -6,8 +6,8 @@ Bundler.setup
 Bundler.require
 
 Motion::Project::App.setup do |app|
-  app.name = 'W-S Crime'
-  app.identifier = 'com.mohawkapps.Winston-Salem-Crime'
+  app.name = "W-S Crime"
+  app.identifier = "com.mohawkapps.Winston-Salem-Crime"
   app.frameworks += %w(CoreLocation MapKit QuartzCore AVFoundation CoreGraphics StoreKit)
   app.device_family = [:iphone, :ipad]
   app.version = '11'
