@@ -1,3 +1,0 @@
-/* Display a different version of the title on the iPad since its icons can handle longer names */
-
-CFBundleDisplayName = "W-S Crime Map";

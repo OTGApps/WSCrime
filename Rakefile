@@ -15,6 +15,7 @@ Motion::Project::App.setup do |app|
   app.interface_orientations = [:portrait, :landscape_left, :landscape_right, :portrait_upside_down]
   app.deployment_target = "6.0"
   app.info_plist['APP_STORE_ID'] = 472546582
+  app.icons = Dir.glob("resources/icon*.png").map{|icon| icon.split("/").last}
 
   app.vendor_project('vendor/ARKit', :xcode, :headers_dir => 'ARKitLib/ARKit')
   app.vendor_project('vendor/TimesSquare', :static, :cflags => '-fobjc-arc')
