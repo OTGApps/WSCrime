@@ -18,33 +18,29 @@ class UIViewController
     labelSubtitle = nil
 
     if titleView.nil?
-        ap "Creating titleview"
         created = true
 
         titleView = UIView.alloc.initWithFrame CGRectZero
         labelTitle = UILabel.alloc.initWithFrame CGRectZero
         labelSubtitle = UILabel.alloc.initWithFrame CGRectZero
 
-        # titleView.layer.borderColor = UIColor.redColor.CGColor
-        # titleView.layer.borderWidth = 1.0
-
-        # labelTitle.layer.borderColor = UIColor.blueColor.CGColor
-        # labelTitle.layer.borderWidth = 1.0
-
-        # labelSubtitle.layer.borderColor = UIColor.greenColor.CGColor
-        # labelSubtitle.layer.borderWidth = 1.0
+        if Device.ios_version.to_f < 7.0
+          labelTitle.shadowColor = UIColor.darkGrayColor
+          labelTitle.textColor = UIColor.whiteColor
+        else
+          labelTitle.shadowColor = UIColor.clearColor
+          labelTitle.textColor = "#0F5D14".to_color
+        end
 
         labelTitle.backgroundColor = UIColor.clearColor
+        labelSubtitle.backgroundColor = UIColor.clearColor
         labelTitle.textAlignment = UITextAlignmentCenter
         labelTitle.lineBreakMode = UILineBreakModeTailTruncation
-        labelSubtitle.backgroundColor = UIColor.clearColor
         labelSubtitle.textAlignment = UITextAlignmentCenter
         labelSubtitle.lineBreakMode = UILineBreakModeTailTruncation
         labelTitle.font = UIFont.boldSystemFontOfSize(18)
         labelSubtitle.font = UIFont.systemFontOfSize(14)
 
-        labelTitle.textColor = UIColor.whiteColor
-        labelTitle.shadowColor = UIColor.darkGrayColor
         labelSubtitle.textColor = labelTitle.textColor
         labelSubtitle.shadowColor = labelTitle.shadowColor
         labelSubtitle.shadowOffset = labelTitle.shadowOffset

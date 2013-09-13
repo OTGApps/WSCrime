@@ -1,6 +1,6 @@
 class DetailScreen < PM::TableScreen
 
-  attr_accessor :parentVC, :data, :date
+  attr_accessor :container, :data, :date
 
   def on_load
     @data.sort! {|a,b| a.annotation_params[:sort_by] <=> b.annotation_params[:sort_by] }
@@ -9,19 +9,19 @@ class DetailScreen < PM::TableScreen
   def will_appear
     @view_setup ||= begin
       self.setTitle("Details", subtitle:"for #{@date}")
-      self.navigationController.navigationBar.barStyle = self.navigationController.toolbar.barStyle = UIBarStyleBlack
+      self.navigationController.navigationBar.barStyle = self.navigationController.toolbar.barStyle = UIBarStyleBlack if Device.ios_version.to_f < 7.0
       self.navigationController.setToolbarHidden(false)
 
       #Create the labe at the bottom of the view.
       @label = set_attributes UILabel.alloc.initWithFrame(CGRectMake(0, 0, self.navigationController.toolbar.bounds.size.width, self.navigationController.toolbar.bounds.size.height)), {
         background_color: UIColor.clearColor,
-        text_color: UIColor.whiteColor,
+        text_color: (Device.ios_version.to_f < 7.0 ? UIColor.whiteColor : "#0F5D14".to_color),
         text_alignment: UITextAlignmentCenter,
         line_break_mode: UILineBreakModeTailTruncation,
         font: UIFont.boldSystemFontOfSize(18),
         minimum_font_size: 10,
         resize: [:width, :left, :right],
-        text: "#{incidentCount} Incidents & #{arrestCount} Arrests"
+        text: "#{count('incident')} Incidents & #{count('arrest')} Arrests"
       }
       item = UIBarButtonItem.alloc.initWithCustomView(@label)
       self.toolbarItems = [item]
@@ -29,7 +29,7 @@ class DetailScreen < PM::TableScreen
       # Done Button
       set_nav_bar_button :right,
         title: "Done",
-        action: :close_modal,
+        action: :close,
         type: UIBarButtonItemStyleDone
 
       update_table_data
@@ -48,7 +48,7 @@ class DetailScreen < PM::TableScreen
         cell_style: UITableViewCellStyleSubtitle,
         subtitle: cell.subtitle,
         selection_style: UITableViewCellSelectionStyleBlue,
-        accessory_type: UITableViewCellAccessoryDetailDisclosureButton,
+        accessory_type: UITableViewCellAccessoryDisclosureIndicator,
         accessory_action: :tapped_crime,
         action: :tapped_crime,
         arguments: {marker_index: i},
@@ -63,19 +63,11 @@ class DetailScreen < PM::TableScreen
   end
 
   def tapped_crime(params = {})
-    @parentVC.closeDetailAndZoomToEvent(@data[params[:marker_index]]) unless @parentVC.nil?
+    @container.closeDetailAndZoomToEvent(@data[params[:marker_index]]) unless @container.nil?
   end
 
-  def incidentCount
-    @data.select { |crime| crime.annotation_params[:type] == "Incident" }.count
-  end
-
-  def arrestCount
-    @data.select { |crime| crime.annotation_params[:type] == "Arrest" }.count
-  end
-
-  def close_modal
-    self.navigationController.dismissModalViewControllerAnimated(true)
+  def count(type)
+    @data.select { |crime| crime.annotation_params[:type].downcase == type.downcase }.count
   end
 
 end

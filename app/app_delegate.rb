@@ -1,5 +1,7 @@
 class AppDelegate < ProMotion::Delegate
 
+  tint_color "#0F5D14".to_color
+
   def on_load(app, options)
     unless Device.simulator?
       NSSetUncaughtExceptionHandler("uncaughtExceptionHandler")

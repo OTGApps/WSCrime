@@ -133,9 +133,7 @@ class MapScreen < PM::MapScreen
 
     # Sometimes the API returns back data for a date that isn't the date we selected.
     # Get the first crime so we can make sure @theDate is set correctly for our data
-    dateParts = annotations.first.date.split("-")
-
-    @theDate = Time.mktime(dateParts[0], dateParts[1], dateParts[2])
+    @theDate = NSDate.dateWithNaturalLanguageString(annotations.first.date)
     @dateButton.title = @theDate.strftime("%b %e, %Y")
 
     #Only change the map zoom if this is the first data load.
@@ -155,7 +153,7 @@ class MapScreen < PM::MapScreen
         return
     end
 
-    open_modal DetailScreen.new(:nav_bar => true, :data => annotations.mutableCopy, :date => @dateButton.title, :parentVC => self ),
+    open_modal DetailScreen.new(:nav_bar => true, :data => annotations.mutableCopy, :date => @dateButton.title, :container => self ),
       transition_style: UIModalTransitionStyleFlipHorizontal,
       presentation_style: UIModalPresentationFormSheet
   end
@@ -174,7 +172,8 @@ class MapScreen < PM::MapScreen
 
   def zoom_to_marker(marker)
     set_region region(coordinate: marker.coordinate, span: [0.05, 0.05])
-    select_annotation marker
+    possible_markers = annotations.select{|m| m.title == marker.title && m.coordinate == marker.coordinate}
+    select_annotation possible_markers.first
   end
 
   #Present the calendar view to change the date.
