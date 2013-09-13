@@ -10,10 +10,10 @@ Motion::Project::App.setup do |app|
   app.identifier = 'com.mohawkapps.Winston-Salem-Crime'
   app.frameworks += %w(CoreLocation MapKit QuartzCore AVFoundation CoreGraphics StoreKit)
   app.device_family = [:iphone, :ipad]
-  app.version = '10'
-  app.short_version = '1.7'
+  app.version = '11'
+  app.short_version = '1.8'
   app.interface_orientations = [:portrait, :landscape_left, :landscape_right, :portrait_upside_down]
-  app.deployment_target = "5.1"
+  app.deployment_target = "6.0"
   app.info_plist['APP_STORE_ID'] = 472546582
 
   app.vendor_project('vendor/ARKit', :xcode, :headers_dir => 'ARKitLib/ARKit')
