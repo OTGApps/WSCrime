@@ -3,7 +3,7 @@ class DetailScreen < PM::TableScreen
   attr_accessor :container, :data, :date
 
   def on_load
-    @data.sort! {|a,b| a.annotation_params[:sort_by] <=> b.annotation_params[:sort_by] }
+    @data.sort! {|a,b| a.sort_by <=> b.sort_by }
   end
 
   def will_appear
@@ -28,7 +28,7 @@ class DetailScreen < PM::TableScreen
 
       # Done Button
       set_nav_bar_button :right,
-        title: "Done",
+        title: "Close",
         action: :close,
         type: UIBarButtonItemStyleDone
 
@@ -37,12 +37,19 @@ class DetailScreen < PM::TableScreen
   end
 
   def table_data
-    [{cells:build_cells}]
+    [{
+      title: "Arrests",
+      cells: build_cells(:arrest)
+    }, {
+      title: "Incidents",
+      cells: build_cells(:incident)
+    }]
   end
 
-  def build_cells
+  def build_cells(type)
     c = []
-    @data.each_with_index do |cell,i|
+    crimes = type == :arrest ? arrests : incidents
+    crimes.each_with_index do |cell,i|
       c << {
         title: cell.title,
         cell_style: UITableViewCellStyleSubtitle,
@@ -51,23 +58,28 @@ class DetailScreen < PM::TableScreen
         accessory_type: UITableViewCellAccessoryDisclosureIndicator,
         accessory_action: :tapped_crime,
         action: :tapped_crime,
-        arguments: {marker_index: i},
-        image: pin_image(cell)
+        arguments: {marker_index: i, marker_type: type}
       }
     end
     c
   end
 
-  def pin_image(cell)
-    cell.annotation_params[:type].downcase == "arrest" ? "pinannotation_red" : "pinannotation_purple"
+  def arrests
+    @data.select { |crime| crime.type.downcase == 'arrest' }
+  end
+
+  def incidents
+    @data.select { |crime| crime.type.downcase == 'incident' }
   end
 
   def tapped_crime(params = {})
-    @container.closeDetailAndZoomToEvent(@data[params[:marker_index]]) unless @container.nil?
+    crimes = params[:marker_type] == :arrest ? arrests : incidents
+
+    @container.closeDetailAndZoomToEvent(crimes[params[:marker_index]]) unless @container.nil?
   end
 
   def count(type)
-    @data.select { |crime| crime.annotation_params[:type].downcase == type.downcase }.count
+    @data.select { |crime| crime.type.downcase == type.downcase }.count
   end
 
 end
