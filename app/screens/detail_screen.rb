@@ -7,6 +7,7 @@ class DetailScreen < PM::TableScreen
   end
 
   def will_appear
+    Flurry.logEvent "DetailScreen" unless Device.simulator?
     @view_setup ||= begin
       self.setTitle("Details", subtitle:"for #{@date}")
       self.navigationController.navigationBar.barStyle = self.navigationController.toolbar.barStyle = UIBarStyleBlack if Device.ios_version.to_f < 7.0
@@ -74,8 +75,11 @@ class DetailScreen < PM::TableScreen
 
   def tapped_crime(params = {})
     crimes = params[:marker_type] == :arrest ? arrests : incidents
+    marker = crimes[params[:marker_index]]
 
-    @container.closeDetailAndZoomToEvent(crimes[params[:marker_index]]) unless @container.nil?
+    Flurry.logEvent "TappedCrimeDetail" unless Device.simulator?
+
+    @container.closeDetailAndZoomToEvent(marker) unless @container.nil?
   end
 
   def count(type)

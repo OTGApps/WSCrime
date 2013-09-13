@@ -7,6 +7,8 @@ class AboutScreen < PM::WebScreen
   end
 
   def will_appear
+    Flurry.logEvent "AboutScreen" unless Device.simulator?
+
     App::Persistence["seenAbout"] = "yes"
     @view_loaded ||= begin
       self.navigationController.navigationBar.barStyle = UIBarStyleBlack if Device.ios_version.to_f < 7.0

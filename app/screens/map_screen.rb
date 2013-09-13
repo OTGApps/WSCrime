@@ -69,6 +69,7 @@ class MapScreen < PM::MapScreen
 
   def on_appear
     # Show the about window if this is their first time loading the app.
+    Flurry.logEvent "MapScreen" unless Device.simulator?
     show_about unless App::Persistence['seenAbout'] == "yes"
     self.navigationController.setToolbarHidden(false, animated:true)
   end
@@ -113,6 +114,7 @@ class MapScreen < PM::MapScreen
 
           else
 
+            Flurry.logEvent("NoDataFound", withParameters:{date: dateString}) unless Device.simulator?
             App.alert("No Results Found for that day.")
             @activity_view.stopAnimating
             @dateButton.title = "No Results"
@@ -120,6 +122,7 @@ class MapScreen < PM::MapScreen
           end
       else
 
+        Flurry.logEvent("ServerError", withParameters:{date: dateString}) unless Device.simulator?
         App.alert("Whoops! There was an error downloading data from the server. Please check your internet connection or try again later.")
         @dateButton.title = "Server Error"
         @activity_view.stopAnimating
@@ -206,6 +209,7 @@ class MapScreen < PM::MapScreen
     if @theDate.isEqualToDate(date) == false
 
       if date.laterDate(Time.now) == date
+        Flurry.logEvent("SelectedFutureDate") unless Device.simulator?
         App.alert("Please select a date\nin the past.")
         return
       end
@@ -221,21 +225,21 @@ class MapScreen < PM::MapScreen
   def loadARWindow(sender)
 
     if annotations.length == 0
+        Flurry.logEvent "ARScreenNoIncidents" unless Device.simulator?
         App.alert("There are no incidents to view.")
         return
     end
 
     if ARKit.deviceSupportsAR || Device.simulator?
+      Flurry.logEvent "ARScreen" unless Device.simulator?
+      arVC = ARViewController.alloc.initWithDelegate( self )
+      arVC.setRadarRange(4000.0)
+      arVC.setOnlyShowItemsWithinRadarRange(true)
+      arVC.showsCloseButton = false
+      arVC.setHidesBottomBarWhenPushed(true)
+      arVC.setRotateViewsBasedOnPerspective(false)
 
-        arVC = ARViewController.alloc.initWithDelegate( self )
-        arVC.setRadarRange(4000.0)
-        arVC.setOnlyShowItemsWithinRadarRange(true)
-        arVC.showsCloseButton = false
-        arVC.setHidesBottomBarWhenPushed(true)
-        arVC.setRotateViewsBasedOnPerspective(false)
-
-        self.navigationController.pushViewController(arVC, animated:true)
-
+      self.navigationController.pushViewController(arVC, animated:true)
     end
   end
 
