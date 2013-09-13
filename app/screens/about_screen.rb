@@ -9,8 +9,8 @@ class AboutScreen < PM::WebScreen
   def will_appear
     App::Persistence["seenAbout"] = "yes"
     @view_loaded ||= begin
-      self.navigationController.navigationBar.barStyle = UIBarStyleBlack
-      set_nav_bar_right_button "Done", action: :close, type: UIBarButtonItemStyleDone
+      self.navigationController.navigationBar.barStyle = UIBarStyleBlack if Device.ios_version.to_f < 7.0
+      set_nav_bar_right_button "Close", action: :close, type: UIBarButtonItemStyleDone
     end
   end
 
