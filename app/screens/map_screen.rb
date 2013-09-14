@@ -151,7 +151,6 @@ class MapScreen < PM::MapScreen
   def show_about
     open_modal AboutScreen.new(external_links: true),
       nav_bar: true,
-      transition_style: UIModalTransitionStyleFlipHorizontal,
       presentation_style: UIModalPresentationFormSheet
   end
 
@@ -163,7 +162,6 @@ class MapScreen < PM::MapScreen
 
     open_modal DetailScreen.new(:data => annotations.mutableCopy, :date => @dateButton.title, :container => self),
       nav_bar: true,
-      transition_style: UIModalTransitionStyleFlipHorizontal,
       presentation_style: UIModalPresentationFormSheet
   end
 
