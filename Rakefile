@@ -44,20 +44,3 @@ task :log do
   app = Motion::Project::App.config
   exec "less '#{Dir[File.join(ENV['HOME'], "/Library/Logs/DiagnosticReports/#{app.name}*")].last}'"
 end
-
-# Rake helper tasks
-
-desc "Run simulator in retina mode"
-task :retina do
-  exec "bundle exec rake simulator retina=true"
-end
-
-desc "Run simulator on iPad"
-task :ipad do
-  exec "bundle exec rake simulator device_family=ipad"
-end
-
-desc "Run simulator on iPad in retina mode"
-task :ipadretina do
-  exec "bundle exec rake simulator retina=true device_family=ipad"
-end
