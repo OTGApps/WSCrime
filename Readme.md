@@ -42,5 +42,4 @@ I recently introduced augmented reality into the app. I'm using [my own fork](ht
 ![](https://raw.github.com/markrickert/WSCrime/master/Marketing/Screenshots/iPhone-small/1.png)&nbsp;
 ![](https://raw.github.com/markrickert/WSCrime/master/Marketing/Screenshots/iPhone-small/2.png)&nbsp;
 ![](https://raw.github.com/markrickert/WSCrime/master/Marketing/Screenshots/iPhone-small/3.png)&nbsp;
-![](https://raw.github.com/markrickert/WSCrime/master/Marketing/Screenshots/iPhone-small/4.png)&nbsp;
-![](https://raw.github.com/markrickert/WSCrime/master/Marketing/Screenshots/iPhone-small/5.png)
+![](https://raw.github.com/markrickert/WSCrime/master/Marketing/Screenshots/iPhone-small/4.png)
