@@ -10,8 +10,8 @@ Motion::Project::App.setup do |app|
   app.identifier = "com.mohawkapps.Winston-Salem-Crime"
   app.frameworks += %w(CoreLocation MapKit QuartzCore AVFoundation CoreGraphics StoreKit)
   app.device_family = [:iphone, :ipad]
-  app.version = '11'
-  app.short_version = '1.8'
+  app.version = '12'
+  app.short_version = '1.8.1'
   app.interface_orientations = [:portrait, :landscape_left, :landscape_right, :portrait_upside_down]
   app.deployment_target = "6.0"
   app.info_plist['APP_STORE_ID'] = 472546582
