@@ -44,3 +44,6 @@ I recently introduced augmented reality into the app. I'm using [my own fork](ht
 ![](https://raw.github.com/MohawkApps/WSCrime/master/Marketing/Screenshots/iPhone-small/2.png)&nbsp;
 ![](https://raw.github.com/MohawkApps/WSCrime/master/Marketing/Screenshots/iPhone-small/3.png)&nbsp;
 ![](https://raw.github.com/MohawkApps/WSCrime/master/Marketing/Screenshots/iPhone-small/4.png)
+
+---
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/MohawkApps/wscrime/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
