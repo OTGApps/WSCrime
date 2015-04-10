@@ -1,7 +1,7 @@
 # Winston-Salem Crime Map
-### A [RubyMotion](http://www.rubymotion.com/) application brought to you by [Mohawk Apps](http://www.mohawkapps.com/).
+### A [RubyMotion](http://www.rubymotion.com/) application brought to you by [Off The Grid Apps](http://otgapps.io/).
 
-![](https://raw.github.com/MohawkApps/WSCrime/master/resources/Icon@2x.png)
+![](https://raw.github.com/OTGApps/WSCrime/master/resources/Icon@2x.png)
 
 This application was originally written in pure Objective-C and submitted to the app store. It went through multiple iterations as an XCode project until I heard about [RubyMotion](http://www.rubymotion.com/) and decided to use it as a chance to not only simplify the codebase for this app, but also to learn Ruby in the meantime.
 
@@ -15,7 +15,7 @@ This app is a *universal application* (meaning that it works on both the iPhone 
 
 You can get the app one of two ways:
 
-1. Clone this repos and run it in the siumlator (or on a device if you are a registered Apple Developer). ```git clone --recursive git://github.com/MohawkApps/WSCrime.git```
+1. Clone this repos and run it in the siumlator (or on a device if you are a registered Apple Developer). ```git clone --recursive git://github.com/OTGApps/WSCrime.git```
 2. Get it from the iTunes App Store:
 
 [![image](http://ax.phobos.apple.com.edgesuite.net/images/web/linkmaker/badge_appstore-lrg.gif)](https://itunes.apple.com/us/app/winston-salem-crime-map/id472546582?mt=8&uo=4&at=10l4yY)
@@ -40,10 +40,7 @@ I recently introduced augmented reality into the app. I'm using [my own fork](ht
 
 ## Screenshots
 
-![](https://raw.github.com/MohawkApps/WSCrime/master/Marketing/Screenshots/iPhone-small/1.png)&nbsp;
-![](https://raw.github.com/MohawkApps/WSCrime/master/Marketing/Screenshots/iPhone-small/2.png)&nbsp;
-![](https://raw.github.com/MohawkApps/WSCrime/master/Marketing/Screenshots/iPhone-small/3.png)&nbsp;
-![](https://raw.github.com/MohawkApps/WSCrime/master/Marketing/Screenshots/iPhone-small/4.png)
-
----
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/MohawkApps/wscrime/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+![](https://raw.github.com/OTGApps/WSCrime/master/Marketing/Screenshots/iPhone-small/1.png)&nbsp;
+![](https://raw.github.com/OTGApps/WSCrime/master/Marketing/Screenshots/iPhone-small/2.png)&nbsp;
+![](https://raw.github.com/OTGApps/WSCrime/master/Marketing/Screenshots/iPhone-small/3.png)&nbsp;
+![](https://raw.github.com/OTGApps/WSCrime/master/Marketing/Screenshots/iPhone-small/4.png)
