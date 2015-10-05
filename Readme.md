@@ -1,3 +1,8 @@
+###
+This project is no longer maintained or available in the App Store.
+###
+
+
 # Winston-Salem Crime Map
 ### A [RubyMotion](http://www.rubymotion.com/) application brought to you by [Off The Grid Apps](http://otgapps.io/).
 
