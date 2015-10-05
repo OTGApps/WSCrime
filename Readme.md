@@ -36,7 +36,7 @@ You can get the app one of two ways:
 
 ## ARKit
 
-I recently introduced augmented reality into the app. I'm using [my own fork](https://github.com/markrickert/iPhone-AR-Toolkit) of [a1phanumeric](https://github.com/a1phanumeric)'s [iPhone AR Toolkit](https://github.com/a1phanumeric/iPhone-AR-Toolkit). The reason I'm using my own fork is becasue including it as a standard xcode project was crashing upon initialization. So I created a static library to use through XCode. I'll try and keep my fork up to date with the main project repo.
+I recently introduced augmented reality into the app. I'm using [my own fork](https://github.com/markrickert/iPhone-AR-Toolkit) of [a1phanumeric](https://github.com/a1phanumeric)'s [iPhone AR Toolkit](https://github.com/a1phanumeric/iPhone-AR-Toolkit). The reason I'm using my own fork is because including it as a standard xcode project was crashing upon initialization. So I created a static library to use through XCode. I'll try and keep my fork up to date with the main project repo.
 
 ## Screenshots
 
